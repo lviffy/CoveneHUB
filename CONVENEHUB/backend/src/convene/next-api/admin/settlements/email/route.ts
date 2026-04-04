@@ -15,7 +15,7 @@ interface Event {
   date_time: string;
   status: string;
   ticket_price: number;
-  eonverse_commission_percentage: number;
+  convene_commission_percentage: number;
   settlement_status: string | null;
 }
 
@@ -34,7 +34,7 @@ interface Settlement {
   notes: string | null;
   gross_revenue: number;
   razorpay_fees: number;
-  eonverse_commission: number;
+  convene_commission: number;
   net_payout: number;
 }
 
@@ -43,7 +43,7 @@ interface SettlementDetails {
   event_date: string;
   gross_revenue: number;
   razorpay_fees: number;
-  eonverse_commission: number;
+  convene_commission: number;
   net_payout: number;
   tickets_sold: number;
   settlement_status: string;
@@ -81,7 +81,7 @@ function generateSettlementCSV(details: SettlementDetails, event: Event, booking
   lines.push('Category,Amount (INR),Notes');
   lines.push(`Gross Revenue,"₹${details.gross_revenue.toFixed(2)}","Total revenue from all confirmed tickets"`);
   lines.push(`Razorpay Gateway Fees,"₹${details.razorpay_fees.toFixed(2)}","2% payment gateway charge"`);
-  lines.push(`CONVENEHUB Commission,"₹${details.eonverse_commission.toFixed(2)}","10% platform commission"`);
+  lines.push(`CONVENEHUB Commission,"₹${details.convene_commission.toFixed(2)}","10% platform commission"`);
   lines.push(`Net Payout,"₹${details.net_payout.toFixed(2)}","Final amount payable to production team"`);
   lines.push('');
 
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
     // Fetch event details
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select('event_id, title, date_time, status, ticket_price, eonverse_commission_percentage, settlement_status')
+      .select('event_id, title, date_time, status, ticket_price, convene_commission_percentage, settlement_status')
       .eq('event_id', event_id)
       .single<Event>();
 
@@ -243,11 +243,11 @@ export async function POST(request: NextRequest) {
 
     // Calculate fees using Decimal.js for precision - use event-specific commission
     const RAZORPAY_FEE_PERCENTAGE = 2;
-    const eventCommissionPercentage = event.eonverse_commission_percentage || 10;
+    const eventCommissionPercentage = event.convene_commission_percentage || 10;
     const grossDecimal = new Decimal(grossRevenue);
     const razorpayFees = grossDecimal.mul(RAZORPAY_FEE_PERCENTAGE).div(100);
-    const eonverseCommission = grossDecimal.mul(eventCommissionPercentage).div(100);
-    const netPayout = grossDecimal.minus(razorpayFees).minus(eonverseCommission);
+    const conveneCommission = grossDecimal.mul(eventCommissionPercentage).div(100);
+    const netPayout = grossDecimal.minus(razorpayFees).minus(conveneCommission);
 
     // Try to fetch existing settlement data if it exists (explicit columns for email)
     const { data: settlement } = await supabase
@@ -257,7 +257,7 @@ export async function POST(request: NextRequest) {
         event_id,
         gross_revenue,
         razorpay_fees,
-        eonverse_commission,
+        convene_commission,
         net_payout,
         transaction_reference,
         transfer_date,
@@ -274,7 +274,7 @@ export async function POST(request: NextRequest) {
       event_date: event.date_time,
       gross_revenue: settlement?.gross_revenue || parseFloat(grossDecimal.toFixed(2)),
       razorpay_fees: settlement?.razorpay_fees || parseFloat(razorpayFees.toFixed(2)),
-      eonverse_commission: settlement?.eonverse_commission || parseFloat(eonverseCommission.toFixed(2)),
+      convene_commission: settlement?.convene_commission || parseFloat(conveneCommission.toFixed(2)),
       net_payout: settlement?.net_payout || parseFloat(netPayout.toFixed(2)),
       tickets_sold: totalTickets,
       settlement_status: event.settlement_status || 'pending',

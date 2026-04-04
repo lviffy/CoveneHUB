@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import './events.css';
+import { EventsHeader } from '@/components/events-header';
 import EventsBrowsePage from '@/components/events/events-browse-page';
 import Footer from '@/components/footer';
 import { Spinner } from '@/components/ui/spinner';
@@ -23,6 +24,7 @@ function LoadingFallback() {
 export default function EventsPage() {
   return (
     <main className="min-h-screen text-render-optimized bg-white">
+      <EventsHeader />
       <div className="pt-16">
         <Suspense fallback={<LoadingFallback />}>
           <EventsBrowsePage />

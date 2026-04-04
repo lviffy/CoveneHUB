@@ -12,7 +12,7 @@ interface EventFinancial {
   total_revenue: string;
   total_bookings: number;
   total_tickets: number;
-  eonverse_commission_percentage: number;
+  convene_commission_percentage: number;
   is_settled: boolean;
 }
 
@@ -20,7 +20,7 @@ interface FinancialData {
   events: EventFinancial[];
   summary: {
     total_gross_revenue: string;
-    total_eonverse_commission: string;
+    total_convene_commission: string;
     total_net_payout: string;
     total_bookings?: number;
     total_tickets_sold: number;
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       total_revenue: event.financial_summary?.gross_revenue || '0',
       total_bookings: event.financial_summary?.total_bookings || 0,
       total_tickets: event.financial_summary?.total_tickets_sold || 0,
-      eonverse_commission_percentage: event.financial_summary?.eonverse_commission_percentage || 10,
+      convene_commission_percentage: event.financial_summary?.convene_commission_percentage || 10,
       is_settled: event.settlement_status === 'settled',
     }));
 
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     // Calculate summary metrics using the correct property paths
     const totalRevenue = new Decimal(data.summary?.total_gross_revenue || 0);
     const totalRazorpayFees = new Decimal(data.summary?.total_razorpay_fees || 0);
-    const totalConveneHubCommission = new Decimal(data.summary?.total_eonverse_commission || 0);
+    const totalConveneHubCommission = new Decimal(data.summary?.total_convene_commission || 0);
     const totalMovieTeamPayout = new Decimal(data.summary?.total_net_payout || 0);
     const totalBookings = data.summary?.total_bookings || 0;
     const totalTickets = data.summary?.total_tickets_sold || 0;
@@ -146,9 +146,9 @@ export async function POST(request: NextRequest) {
       data.events.forEach((event: EventFinancial) => {
         const eventRevenue = new Decimal(event.total_revenue || 0);
         const razorpayFees = eventRevenue.times(2).dividedBy(100); // 2% Razorpay fee
-        const commissionPercentage = event.eonverse_commission_percentage || 10;
-        const eonverseCommission = eventRevenue.times(commissionPercentage / 100);
-        const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(eonverseCommission);
+        const commissionPercentage = event.convene_commission_percentage || 10;
+        const conveneCommission = eventRevenue.times(commissionPercentage / 100);
+        const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(conveneCommission);
 
         // Sanitize fields for CSV
         const sanitize = (str: string) => {
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
           year: 'numeric',
         });
 
-        csvContent += `${sanitize(event.event_name)},${sanitize(formattedDate)},${sanitize(event.venue_name)},${sanitize(event.city)},₹${eventRevenue.toFixed(2)},₹${razorpayFees.toFixed(2)},${commissionPercentage}%,₹${eonverseCommission.toFixed(2)},₹${movieTeamPayout.toFixed(2)},${event.total_bookings},${event.total_tickets},${event.is_settled ? 'Settled' : 'Pending'}\n`;
+        csvContent += `${sanitize(event.event_name)},${sanitize(formattedDate)},${sanitize(event.venue_name)},${sanitize(event.city)},₹${eventRevenue.toFixed(2)},₹${razorpayFees.toFixed(2)},${commissionPercentage}%,₹${conveneCommission.toFixed(2)},₹${movieTeamPayout.toFixed(2)},${event.total_bookings},${event.total_tickets},${event.is_settled ? 'Settled' : 'Pending'}\n`;
       });
     }
 
@@ -262,9 +262,9 @@ export async function POST(request: NextRequest) {
                   ${data.events && data.events.length > 0 ? data.events.map((event: EventFinancial) => {
                     const eventRevenue = new Decimal(event.total_revenue || 0);
                     const razorpayFees = eventRevenue.times(2).dividedBy(100); // 2% Razorpay fee
-                    const commissionPercentage = event.eonverse_commission_percentage || 10;
-                    const eonverseCommission = eventRevenue.times(commissionPercentage / 100);
-                    const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(eonverseCommission);
+                    const commissionPercentage = event.convene_commission_percentage || 10;
+                    const conveneCommission = eventRevenue.times(commissionPercentage / 100);
+                    const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(conveneCommission);
 
                     return `
                       <tr>
@@ -312,7 +312,7 @@ export async function POST(request: NextRequest) {
       html: htmlContent,
       attachments: [
         {
-          filename: `eonverse-financial-summary-${new Date().toISOString().split('T')[0]}.csv`,
+          filename: `convene-financial-summary-${new Date().toISOString().split('T')[0]}.csv`,
           content: csvContent,
           contentType: 'text/csv',
         },

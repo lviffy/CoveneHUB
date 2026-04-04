@@ -150,10 +150,10 @@ export async function sendBookingConfirmationWithQR(
     cid?: string;
   }> = [
       {
-        filename: 'eonverse-logo.png',
+        filename: 'convene-logo.png',
         path: logoPath,
         contentType: 'image/png',
-        cid: 'logo@eonverse', // Content-ID for logo
+        cid: 'logo@convene', // Content-ID for logo
       },
     ];
 
@@ -212,9 +212,9 @@ export async function sendBookingConfirmationWithMultipleTickets(
   let enhancedHTML = template.html;
 
   // If there's a QR code section, replace it
-  if (enhancedHTML.includes('cid:qrcode@eonverse')) {
+  if (enhancedHTML.includes('cid:qrcode@convene')) {
     enhancedHTML = enhancedHTML.replace(
-      /<div[^>]*>[\s\S]*?<img[^>]*src="cid:qrcode@eonverse"[^>]*>[\s\S]*?<\/div>/,
+      /<div[^>]*>[\s\S]*?<img[^>]*src="cid:qrcode@convene"[^>]*>[\s\S]*?<\/div>/,
       ticketsListHTML
     );
   } else {
@@ -236,10 +236,10 @@ export async function sendBookingConfirmationWithMultipleTickets(
     cid?: string;
   }> = [
       {
-        filename: 'eonverse-logo.png',
+        filename: 'convene-logo.png',
         path: logoPath,
         contentType: 'image/png',
-        cid: 'logo@eonverse',
+        cid: 'logo@convene',
       },
     ];
 
@@ -273,7 +273,7 @@ export async function sendBookingConfirmationWithMultipleQR(
         <p style="color: #4a5568; font-size: 14px; margin-bottom: 15px; font-family: monospace; font-weight: 600;">
           ${ticket.ticket_code}
         </p>
-        <img src="cid:qrcode${index}@eonverse" alt="QR Code ${ticket.ticket_number}" style="width: 250px; height: 250px; margin: 10px auto; display: block;" />
+        <img src="cid:qrcode${index}@convene" alt="QR Code ${ticket.ticket_number}" style="width: 250px; height: 250px; margin: 10px auto; display: block;" />
         <p style="color: #718096; font-size: 12px; margin-top: 10px;">
           Show this QR code at the venue
         </p>
@@ -287,7 +287,7 @@ export async function sendBookingConfirmationWithMultipleQR(
 
   // Replace the single QR code section with multiple QR codes
   const enhancedHTML = template.html.replace(
-    /<img[^>]*src="cid:qrcode@eonverse"[^>]*>/,
+    /<img[^>]*src="cid:qrcode@convene"[^>]*>/,
     qrCodesHTML
   );
 
@@ -303,10 +303,10 @@ export async function sendBookingConfirmationWithMultipleQR(
     cid?: string;
   }> = [
       {
-        filename: 'eonverse-logo.png',
+        filename: 'convene-logo.png',
         path: logoPath,
         contentType: 'image/png',
-        cid: 'logo@eonverse',
+        cid: 'logo@convene',
       },
     ];
 
@@ -320,7 +320,7 @@ export async function sendBookingConfirmationWithMultipleQR(
       filename: `qr-code-${ticket.ticket_number}.png`,
       content: buffer.toString('base64'),
       contentType: 'image/png',
-      cid: `qrcode${index}@eonverse`,
+      cid: `qrcode${index}@convene`,
     });
 
     // Downloadable attachment

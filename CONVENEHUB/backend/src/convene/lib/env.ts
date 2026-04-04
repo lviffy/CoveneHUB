@@ -213,7 +213,7 @@ export function validateEnv(): EnvConfig {
   });
   
   // 3. Warn about default/example values
-  if (process.env.QR_HMAC_SECRET?.includes('eonverse-secret-key-2025')) {
+  if (process.env.QR_HMAC_SECRET?.includes('convene-secret-key-2025')) {
     warnings.push(
       '  ⚠️  QR_HMAC_SECRET appears to be the example value. ' +
       'Generate a new secret: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'

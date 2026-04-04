@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         city,
         capacity,
         ticket_price,
-        eonverse_commission_percentage,
+        convene_commission_percentage,
         status,
         settlement_status,
         bookings!inner(
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
           total_tickets_sold: 0,
           total_gross_revenue: 0,
           total_razorpay_fees: 0,
-          total_eonverse_commission: 0,
+          total_convene_commission: 0,
           total_net_payout: 0,
         },
       });
@@ -128,11 +128,11 @@ export async function GET(request: NextRequest) {
 
       // Calculate fees using Decimal.js for precision
       // Use event-specific commission percentage
-      const eventCommissionPercentage = event.eonverse_commission_percentage || 10;
+      const eventCommissionPercentage = event.convene_commission_percentage || 10;
       const grossDecimal = new Decimal(grossRevenue);
       const razorpayFees = grossDecimal.mul(RAZORPAY_FEE_PERCENTAGE).div(100);
-      const eonverseCommission = grossDecimal.mul(eventCommissionPercentage).div(100);
-      const netPayout = grossDecimal.minus(razorpayFees).minus(eonverseCommission);
+      const conveneCommission = grossDecimal.mul(eventCommissionPercentage).div(100);
+      const netPayout = grossDecimal.minus(razorpayFees).minus(conveneCommission);
 
       // Count payment statuses
       const paidBookings = confirmedBookings.filter(
@@ -171,8 +171,8 @@ export async function GET(request: NextRequest) {
           gross_revenue: parseFloat(grossDecimal.toFixed(2)),
           razorpay_fees: parseFloat(razorpayFees.toFixed(2)),
           razorpay_fee_percentage: RAZORPAY_FEE_PERCENTAGE,
-          eonverse_commission: parseFloat(eonverseCommission.toFixed(2)),
-          eonverse_commission_percentage: eventCommissionPercentage,
+          convene_commission: parseFloat(conveneCommission.toFixed(2)),
+          convene_commission_percentage: eventCommissionPercentage,
           net_payout_to_movie_team: parseFloat(netPayout.toFixed(2)),
         },
         bookings: confirmedBookings.map((b: any) => ({
@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
           total_tickets_sold: acc.total_tickets_sold + fs.total_tickets_sold,
           total_gross_revenue: acc.total_gross_revenue + fs.gross_revenue,
           total_razorpay_fees: acc.total_razorpay_fees + fs.razorpay_fees,
-          total_eonverse_commission: acc.total_eonverse_commission + fs.eonverse_commission,
+          total_convene_commission: acc.total_convene_commission + fs.convene_commission,
           total_net_payout: acc.total_net_payout + fs.net_payout_to_movie_team,
         };
       },
@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
         total_tickets_sold: 0,
         total_gross_revenue: 0,
         total_razorpay_fees: 0,
-        total_eonverse_commission: 0,
+        total_convene_commission: 0,
         total_net_payout: 0,
       }
     );
@@ -215,7 +215,7 @@ export async function GET(request: NextRequest) {
     // Round summary values
     summary.total_gross_revenue = parseFloat(summary.total_gross_revenue.toFixed(2));
     summary.total_razorpay_fees = parseFloat(summary.total_razorpay_fees.toFixed(2));
-    summary.total_eonverse_commission = parseFloat(summary.total_eonverse_commission.toFixed(2));
+    summary.total_convene_commission = parseFloat(summary.total_convene_commission.toFixed(2));
     summary.total_net_payout = parseFloat(summary.total_net_payout.toFixed(2));
 
     return NextResponse.json({
@@ -224,7 +224,7 @@ export async function GET(request: NextRequest) {
       summary,
       fee_structure: {
         razorpay_fee_percentage: RAZORPAY_FEE_PERCENTAGE,
-        eonverse_commission_note: 'Commission percentage varies per event',
+        convene_commission_note: 'Commission percentage varies per event',
       },
     });
 

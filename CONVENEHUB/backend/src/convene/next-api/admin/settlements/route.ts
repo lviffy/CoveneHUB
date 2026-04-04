@@ -11,7 +11,7 @@ interface Event {
   title: string;
   status: string;
   ticket_price: number;
-  eonverse_commission_percentage: number;
+  convene_commission_percentage: number;
   settlement_status: string | null;
 }
 
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     // Fetch event and calculate financials
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select('event_id, title, status, ticket_price, eonverse_commission_percentage, settlement_status')
+      .select('event_id, title, status, ticket_price, convene_commission_percentage, settlement_status')
       .eq('event_id', event_id)
       .single<Event>();
 
@@ -204,16 +204,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate fees and commission using event-specific commission rate
-    const eventCommissionPercentage = event.eonverse_commission_percentage || 10;
+    const eventCommissionPercentage = event.convene_commission_percentage || 10;
     const razorpayFees = grossRevenue.times(0.02);
-    const eonverseCommission = grossRevenue.times(eventCommissionPercentage / 100);
-    const netPayout = grossRevenue.minus(razorpayFees).minus(eonverseCommission);
+    const conveneCommission = grossRevenue.times(eventCommissionPercentage / 100);
+    const netPayout = grossRevenue.minus(razorpayFees).minus(conveneCommission);
 
     // Round to 2 decimal places
     const financials = {
       gross_revenue: parseFloat(grossRevenue.toFixed(2)),
       razorpay_fees: parseFloat(razorpayFees.toFixed(2)),
-      eonverse_commission: parseFloat(eonverseCommission.toFixed(2)),
+      convene_commission: parseFloat(conveneCommission.toFixed(2)),
       net_payout: parseFloat(netPayout.toFixed(2)),
     };
 
@@ -224,7 +224,7 @@ export async function POST(request: NextRequest) {
         p_event_id: event_id,
         p_gross_revenue: financials.gross_revenue,
         p_razorpay_fees: financials.razorpay_fees,
-        p_eonverse_commission: financials.eonverse_commission,
+        p_convene_commission: financials.convene_commission,
         p_net_payout: financials.net_payout,
         p_transaction_reference: transaction_reference,
         p_transfer_date: transfer_date,
