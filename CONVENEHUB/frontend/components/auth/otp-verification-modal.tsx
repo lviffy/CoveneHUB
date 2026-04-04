@@ -69,17 +69,14 @@ export function OTPVerificationModal({
     setError(null);
 
     try {
-      const response = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, otp, type }),
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: otp,
+        type,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Verification failed');
+      if (error || !data?.session?.user) {
+        throw new Error(error?.message || 'Verification failed');
       }
 
       // Mark as verified IMMEDIATELY
@@ -87,7 +84,7 @@ export function OTPVerificationModal({
       // Close modal BEFORE calling onVerified to prevent any modal-related errors
       onClose();
       // Then call the callback which will handle the redirect
-      onVerified(data.role);
+      onVerified(data.session.user.role);
     } catch (error: any) {
       // Only show error if not already verified
       if (!isVerified) {
@@ -112,10 +109,11 @@ export function OTPVerificationModal({
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email: email,
+        email,
         options: {
-          shouldCreateUser: false,
-        }
+          type,
+          shouldCreateUser: type !== 'recovery',
+        },
       });
 
       if (error) throw error;

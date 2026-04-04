@@ -12,6 +12,11 @@ interface UserDocument {
   campusId?: string;
   phone?: string;
   city?: string;
+  emailVerified?: boolean;
+  otpCodeHash?: string;
+  otpType?: 'signup' | 'email' | 'recovery';
+  otpExpiresAt?: Date;
+  otpVerifiedAt?: Date;
 }
 
 const userSchema = new Schema<UserDocument>(
@@ -26,6 +31,11 @@ const userSchema = new Schema<UserDocument>(
     campusId: { type: String },
     phone: { type: String },
     city: { type: String },
+    emailVerified: { type: Boolean, default: false },
+    otpCodeHash: { type: String },
+    otpType: { type: String, enum: ['signup', 'email', 'recovery'] },
+    otpExpiresAt: { type: Date },
+    otpVerifiedAt: { type: Date },
   },
   { timestamps: true }
 );

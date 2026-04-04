@@ -46,10 +46,11 @@ function ForgotPasswordContent() {
     try {
       // Send OTP for password recovery
       const { error } = await supabase.auth.signInWithOtp({
-        email: email,
+        email,
         options: {
+          type: 'recovery',
           shouldCreateUser: false,
-        }
+        },
       });
 
       if (error) {
@@ -95,9 +96,9 @@ function ForgotPasswordContent() {
     try {
       // Verify OTP - this will create a session
       const { data, error } = await supabase.auth.verifyOtp({
-        email: email,
+        email,
         token: otp,
-        type: 'email',
+        type: 'recovery',
       });
 
       if (error) {
@@ -134,10 +135,11 @@ function ForgotPasswordContent() {
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email: email,
+        email,
         options: {
+          type: 'recovery',
           shouldCreateUser: false,
-        }
+        },
       });
 
       if (error) throw error;

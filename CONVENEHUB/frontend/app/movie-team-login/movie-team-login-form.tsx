@@ -175,14 +175,16 @@ export function MovieTeamLoginForm() {
         throw new Error(error.message || 'Failed to create account');
       }
 
-      await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          token: 'mongo-compat',
-        }),
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          type: 'signup',
+          shouldCreateUser: true,
+        },
       });
+      if (otpError) {
+        throw new Error(otpError.message || 'Failed to send verification code');
+      }
 
       // Store email for OTP verification
       setPendingVerificationEmail(email);

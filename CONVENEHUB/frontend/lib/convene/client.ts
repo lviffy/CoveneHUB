@@ -749,10 +749,15 @@ const auth = {
     return { error: null };
   },
 
-  async signInWithOtp(payload: { email: string }) {
-    const response = await rawApiFetch('/auth/forgot-password', {
+  async signInWithOtp(payload: { email: string; options?: { shouldCreateUser?: boolean; type?: 'signup' | 'email' | 'recovery' } }) {
+    const type = payload.options?.type || (payload.options?.shouldCreateUser === false ? 'recovery' : 'signup');
+    const response = await rawApiFetch('/auth/send-otp', {
       method: 'POST',
-      body: JSON.stringify({ email: payload.email }),
+      body: JSON.stringify({
+        email: payload.email,
+        type,
+        options: payload.options,
+      }),
     });
 
     if (!response.ok) {
@@ -763,19 +768,35 @@ const auth = {
     return { data: { sent: true }, error: null };
   },
 
-  async verifyOtp(_payload: { email: string; token: string; type?: string }) {
+  async verifyOtp(payload: { email: string; token: string; type?: string }) {
     const response = await rawApiFetch('/auth/verify-otp', {
       method: 'POST',
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        email: payload.email,
+        otp: payload.token,
+        type: payload.type,
+      }),
     });
 
+    const json = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-      const json = await response.json().catch(() => ({}));
       return { data: { session: null }, error: { message: json?.message || json?.error || 'OTP verification failed' } };
     }
 
-    const { data } = await this.getSession();
-    return { data: { session: data.session }, error: null };
+    const user = json?.user ? mapBackendUser(json.user) : null;
+    if (!json?.accessToken || !user) {
+      return { data: { session: null }, error: { message: 'OTP verification failed' } };
+    }
+
+    const session: AuthSession = {
+      access_token: json.accessToken,
+      refresh_token: json.refreshToken,
+      user,
+    };
+
+    setStoredSession(session.access_token, session.refresh_token, session.user);
+    return { data: { session }, error: null };
   },
 
   async updateUser(payload: { password?: string }) {

@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { randomBytes } from 'crypto';
+import { createHash, randomBytes, randomInt } from 'crypto';
+import nodemailer, { Transporter } from 'nodemailer';
 import { z } from 'zod';
 import { UserModel } from '../models/User';
 import { signAccessToken, signRefreshToken } from '../utils/tokens';
@@ -102,6 +103,99 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+const otpRequestSchema = z.object({
+  email: z.string().email(),
+  type: z.enum(['signup', 'email', 'recovery']).optional(),
+  options: z
+    .object({
+      shouldCreateUser: z.boolean().optional(),
+    })
+    .optional(),
+});
+
+const otpVerifySchema = z.object({
+  email: z.string().email(),
+  otp: z.string().regex(/^\d{6}$/).optional(),
+  token: z.string().regex(/^\d{6}$/).optional(),
+  type: z.enum(['signup', 'email', 'recovery']).optional(),
+});
+
+type OtpFlowType = 'signup' | 'email' | 'recovery';
+
+let smtpTransporter: Transporter | null = null;
+
+function isSmtpConfigured() {
+  return Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASSWORD);
+}
+
+function isSmtpSecure() {
+  const secureRaw = (env.SMTP_SECURE || '').toLowerCase();
+  return secureRaw === 'true' || secureRaw === '1' || env.SMTP_PORT === 465;
+}
+
+async function getSmtpTransporter() {
+  if (!isSmtpConfigured()) {
+    return null;
+  }
+
+  if (smtpTransporter) {
+    return smtpTransporter;
+  }
+
+  smtpTransporter = nodemailer.createTransport({
+    host: env.SMTP_HOST,
+    port: env.SMTP_PORT,
+    secure: isSmtpSecure(),
+    auth: {
+      user: env.SMTP_USER,
+      pass: env.SMTP_PASSWORD,
+    },
+  });
+
+  return smtpTransporter;
+}
+
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase();
+}
+
+function resolveOtpType(inputType?: string, shouldCreateUser?: boolean): OtpFlowType {
+  if (inputType === 'signup' || inputType === 'email' || inputType === 'recovery') {
+    return inputType;
+  }
+  return shouldCreateUser === false ? 'recovery' : 'signup';
+}
+
+function buildOtpHash(email: string, otp: string) {
+  return createHash('sha256')
+    .update(`${normalizeEmail(email)}:${otp}:${env.JWT_ACCESS_SECRET}`)
+    .digest('hex');
+}
+
+function generateOtpCode() {
+  return String(randomInt(0, 1_000_000)).padStart(6, '0');
+}
+
+async function sendOtpEmail(email: string, otp: string, type: OtpFlowType) {
+  const transporter = await getSmtpTransporter();
+  if (!transporter) {
+    return false;
+  }
+
+  const subject = type === 'recovery' ? 'CONVENEHUB password reset code' : 'CONVENEHUB verification code';
+  const actionText = type === 'recovery' ? 'reset your password' : 'verify your account';
+
+  await transporter.sendMail({
+    from: env.SMTP_FROM_EMAIL || env.SMTP_USER,
+    to: email,
+    subject,
+    text: `Your CONVENEHUB OTP is ${otp}. It expires in ${env.OTP_TTL_MINUTES} minutes. Use this to ${actionText}.`,
+    html: `<p>Your CONVENEHUB OTP is <strong>${otp}</strong>.</p><p>This code expires in ${env.OTP_TTL_MINUTES} minutes.</p><p>Use this to ${actionText}.</p>`,
+  });
+
+  return true;
+}
+
 async function handleRegister(req: Request, res: Response) {
   const parsed = registerSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -113,7 +207,8 @@ async function handleRegister(req: Request, res: Response) {
     return res.status(400).json({ success: false, message: 'fullName is required' });
   }
 
-  const { email, password, tenantId, campusId, phone, city } = parsed.data;
+  const { password, tenantId, campusId, phone, city } = parsed.data;
+  const email = normalizeEmail(parsed.data.email);
   const role = normalizeRole(parsed.data.role);
   const existing = await UserModel.findOne({ email });
   if (existing) {
@@ -343,7 +438,8 @@ authRouter.post('/login', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid credentials' });
   }
 
-  const { email, password } = parsed.data;
+  const email = normalizeEmail(parsed.data.email);
+  const { password } = parsed.data;
   const user = await UserModel.findOne({ email });
   if (!user) {
     return res.status(404).json({ success: false, code: 'USER_NOT_FOUND', message: 'No account found for this email. Please sign up first.' });
@@ -389,13 +485,107 @@ authRouter.post('/signout', (_req, res) => {
   res.json({ success: true, message: 'Signed out' });
 });
 
-authRouter.post('/forgot-password', (_req, res) => {
-  res.json({ success: true, message: 'If this email exists, a reset link/OTP has been sent' });
+async function sendOtpHandler(req: Request, res: Response, forcedType?: OtpFlowType) {
+  const parsed = otpRequestSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ success: false, message: parsed.error.issues[0]?.message || 'Invalid OTP request' });
+  }
+
+  const email = normalizeEmail(parsed.data.email);
+  const type = forcedType || resolveOtpType(parsed.data.type, parsed.data.options?.shouldCreateUser);
+  const user = await UserModel.findOne({ email });
+
+  if (!user) {
+    if (type === 'recovery') {
+      return res.json({ success: true, message: 'If this email exists, a verification code has been sent' });
+    }
+    return res.status(404).json({ success: false, message: 'No account found for this email. Please sign up first.' });
+  }
+
+  const otp = generateOtpCode();
+  user.otpCodeHash = buildOtpHash(email, otp);
+  user.otpType = type;
+  user.otpExpiresAt = new Date(Date.now() + env.OTP_TTL_MINUTES * 60_000);
+  await user.save();
+
+  try {
+    const sent = await sendOtpEmail(email, otp, type);
+    if (!sent) {
+      return res.status(500).json({
+        success: false,
+        message: 'SMTP is not configured on the backend. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD and SMTP_FROM_EMAIL.',
+      });
+    }
+  } catch {
+    return res.status(500).json({ success: false, message: 'Failed to send OTP email. Please try again.' });
+  }
+
+  return res.json({ success: true, message: 'OTP sent successfully' });
+}
+
+authRouter.post('/send-otp', async (req, res) => {
+  return sendOtpHandler(req, res);
 });
 
-authRouter.post('/verify-otp', (_req, res) => {
-  // Mongo migration compatibility: OTP flow can be layered later.
-  res.json({ success: true, message: 'OTP verification accepted in compatibility mode' });
+authRouter.post('/forgot-password', async (req, res) => {
+  return sendOtpHandler(req, res, 'recovery');
+});
+
+authRouter.post('/verify-otp', async (req, res) => {
+  const parsed = otpVerifySchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ success: false, message: parsed.error.issues[0]?.message || 'Invalid OTP payload' });
+  }
+
+  const email = normalizeEmail(parsed.data.email);
+  const otp = parsed.data.otp || parsed.data.token;
+  if (!otp) {
+    return res.status(400).json({ success: false, message: 'OTP code is required' });
+  }
+
+  const user = await UserModel.findOne({ email });
+  if (!user || !user.otpCodeHash || !user.otpExpiresAt) {
+    return res.status(401).json({ success: false, message: 'Invalid or expired OTP' });
+  }
+
+  if (user.otpExpiresAt.getTime() < Date.now()) {
+    user.otpCodeHash = undefined;
+    user.otpType = undefined;
+    user.otpExpiresAt = undefined;
+    await user.save();
+    return res.status(401).json({ success: false, message: 'OTP has expired. Please request a new one.' });
+  }
+
+  const expectedHash = buildOtpHash(email, otp);
+  if (user.otpCodeHash !== expectedHash) {
+    return res.status(401).json({ success: false, message: 'Invalid OTP code' });
+  }
+
+  const effectiveType: OtpFlowType = parsed.data.type || user.otpType || 'signup';
+  if (effectiveType !== 'recovery') {
+    user.emailVerified = true;
+  }
+
+  user.otpCodeHash = undefined;
+  user.otpType = undefined;
+  user.otpExpiresAt = undefined;
+  user.otpVerifiedAt = new Date();
+  await user.save();
+
+  const payload = { sub: String(user._id), role: user.role, tenantId: user.tenantId };
+  const accessToken = signAccessToken(payload);
+  const refreshToken = signRefreshToken(payload);
+
+  const frontendUser = toFrontendUser(user);
+
+  return res.json({
+    success: true,
+    message: 'OTP verified successfully',
+    user: frontendUser,
+    role: frontendUser.role,
+    accessToken,
+    refreshToken,
+  });
 });
 
 authRouter.post('/reset-password', requireAuth, async (req, res) => {
