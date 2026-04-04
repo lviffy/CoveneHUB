@@ -29,7 +29,7 @@ import { Spinner } from '@/components/ui/spinner'
 
 export default function EventsBrowsePage() {
     const router = useRouter()
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
 
     // State
     const [events, setEvents] = useState<Event[]>([])
@@ -48,7 +48,7 @@ export default function EventsBrowsePage() {
     const fetchEvents = useCallback(async () => {
         try {
             setIsLoading(true)
-            const response = await fetch(`/api/events/public?t=${Date.now()}`, {
+            const response = await fetch(`/api/v1/events/public?t=${Date.now()}`, {
                 cache: 'no-store',
                 headers: { 'Cache-Control': 'no-cache' }
             })

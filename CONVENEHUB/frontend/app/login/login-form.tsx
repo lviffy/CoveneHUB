@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -50,15 +50,32 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [pendingVerificationEmail, setPendingVerificationEmail] = useState('');
+  const [authNotice, setAuthNotice] = useState('');
   const [showGoogleSignupForm, setShowGoogleSignupForm] = useState(false);
   const [googleSignupData, setGoogleSignupData] = useState({
     phone: '',
     city: '',
   });
+  const handledAuthErrorRef = useRef<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
   const supabase = createClient();
+
+  const switchToSignUp = (prefillEmail?: string, notice?: string) => {
+    setIsSignUp(true);
+    setPassword('');
+    setPasswordTouched(false);
+    setFullName('');
+    setFullNameError('');
+    setPhone('');
+    setCity('');
+    setAuthNotice(notice || '');
+    if (prefillEmail) {
+      setEmail(prefillEmail);
+    }
+    dismiss();
+  };
 
   // Handle OTP verification success
   const handleOTPVerified = (role?: string) => {
@@ -84,12 +101,28 @@ export function LoginForm() {
   // Handle OAuth errors from URL parameters
   useEffect(() => {
     const error = searchParams.get('error');
+
+    if (!error) {
+      handledAuthErrorRef.current = null;
+      return;
+    }
+
     const errorDescription = searchParams.get('error_description');
     const details = searchParams.get('details');
+    const prefillEmail = searchParams.get('email') || '';
+    const errorKey = `${error}|${errorDescription || ''}|${details || ''}|${prefillEmail}`;
 
-    if (error) {
-      let message = 'An error occurred during authentication.';
-      
+    if (handledAuthErrorRef.current === errorKey) {
+      return;
+    }
+    handledAuthErrorRef.current = errorKey;
+
+    let message = 'An error occurred during authentication.';
+
+    if (error === 'user_not_found') {
+      message = 'No account found for this email. Please sign up first.';
+      switchToSignUp(prefillEmail || undefined, message);
+    } else {
       if (error === 'auth_failed') {
         message = details || 'Authentication failed. Please try again.';
       } else if (error === 'no_code') {
@@ -98,19 +131,24 @@ export function LoginForm() {
         message = errorDescription;
       }
 
-      toast({
-        title: 'Authentication Error',
-        description: message,
-        variant: 'destructive',
-      });
-
-      // Clean up URL
-      router.replace('/login');
+      setAuthNotice(message);
     }
-  }, [searchParams, toast, router]);
+
+    // Clean up URL query params to avoid re-processing error state on rerender.
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('error');
+      url.searchParams.delete('error_description');
+      url.searchParams.delete('details');
+      url.searchParams.delete('email');
+      const query = url.searchParams.toString();
+      window.history.replaceState({}, '', `${url.pathname}${query ? `?${query}` : ''}${url.hash}`);
+    }
+  }, [searchParams]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthNotice('');
 
     // Validate full name
     const { isValid: isNameValid, error: nameError } = validateFullName(fullName);
@@ -207,6 +245,7 @@ export function LoginForm() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setAuthNotice('');
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -215,7 +254,7 @@ export function LoginForm() {
       });
 
       if (error) {
-        throw new Error(error.message || 'Incorrect email or password. Please try again.');
+        throw error;
       }
 
       // The API now returns user info with role directly
@@ -252,12 +291,15 @@ export function LoginForm() {
       return; // Prevent finally block from running setIsLoading(false)
     } catch (error: any) {
       const errorMessage = error.message || 'Incorrect email or password. Please try again.';
-      
-      toast({
-        title: 'Login Failed',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+      const errorCode = error?.code || '';
+
+      if (errorCode === 'USER_NOT_FOUND' || errorMessage.toLowerCase().includes('no account found')) {
+        const message = 'No account found for this email. Please sign up first.';
+        switchToSignUp(email, message);
+        return;
+      }
+
+      setAuthNotice(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -266,6 +308,8 @@ export function LoginForm() {
   const handleGoogleLogin = async () => {
     try {
       const supabase = createClient();
+      // Ensure sign-in flow is treated as sign-in (not stale sign-up intent)
+      document.cookie = 'pending_google_signup=; Max-Age=0; Path=/; SameSite=Lax';
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -382,6 +426,12 @@ export function LoginForm() {
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {authNotice && (
+            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {authNotice}
+            </div>
+          )}
+
           <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-4">
             {/* Full Name Field - Only for Sign Up */}
             {isSignUp && (
@@ -568,6 +618,7 @@ export function LoginForm() {
               type="button"
               onClick={() => {
                 setIsSignUp(!isSignUp);
+                setAuthNotice('');
                 setEmail('');
                 setPassword('');
                 setPasswordTouched(false);

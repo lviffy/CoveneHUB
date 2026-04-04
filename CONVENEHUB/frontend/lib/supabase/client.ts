@@ -65,6 +65,29 @@ function safeJsonParse<T>(value: string | null): T | null {
   }
 }
 
+export function normalizeAuthUser(user: any): AuthUser {
+  const role = mapRoleToFrontend(user?.role || user?.user_metadata?.role);
+  const fullName = user?.user_metadata?.full_name || user?.full_name || user?.fullName || '';
+  const city = user?.city || user?.user_metadata?.city;
+  const phone = user?.phone || user?.user_metadata?.phone;
+
+  return {
+    id: String(user?.id || user?._id || ''),
+    email: user?.email || '',
+    role,
+    phone,
+    city,
+    created_at: user?.created_at || user?.createdAt,
+    user_metadata: {
+      ...(user?.user_metadata || {}),
+      full_name: fullName,
+      city,
+      phone,
+      role,
+    },
+  };
+}
+
 function getCookieValue(name: string): string | null {
   if (typeof document === 'undefined') return null;
   const entries = document.cookie ? document.cookie.split('; ') : [];
@@ -86,15 +109,18 @@ function getStoredRefreshToken() {
 }
 
 function getStoredUser() {
-  return typeof window === 'undefined' ? null : safeJsonParse<AuthUser>(localStorage.getItem(USER_KEY));
+  if (typeof window === 'undefined') return null;
+  const parsed = safeJsonParse<any>(localStorage.getItem(USER_KEY));
+  return parsed ? normalizeAuthUser(parsed) : null;
 }
 
 function setStoredSession(accessToken: string, refreshToken: string | undefined, user: AuthUser) {
   if (typeof window === 'undefined') return;
+  const normalizedUser = normalizeAuthUser(user);
   localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   if (refreshToken) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
-  window.dispatchEvent(new CustomEvent(AUTH_EVENT, { detail: { event: 'SIGNED_IN', session: { access_token: accessToken, refresh_token: refreshToken, user } } }));
+  localStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
+  window.dispatchEvent(new CustomEvent(AUTH_EVENT, { detail: { event: 'SIGNED_IN', session: { access_token: accessToken, refresh_token: refreshToken, user: normalizedUser } } }));
 }
 
 function clearStoredSession() {
@@ -106,21 +132,7 @@ function clearStoredSession() {
 }
 
 function mapBackendUser(user: any): AuthUser {
-  const role = mapRoleToFrontend(user?.role);
-  return {
-    id: String(user?.id || user?._id || ''),
-    email: user?.email || '',
-    role,
-    phone: user?.phone,
-    city: user?.city,
-    created_at: user?.created_at || user?.createdAt,
-    user_metadata: {
-      full_name: user?.full_name || user?.fullName,
-      city: user?.city,
-      phone: user?.phone,
-      role,
-    },
-  };
+  return normalizeAuthUser(user);
 }
 
 function mapBackendEvent(event: any) {
@@ -678,7 +690,13 @@ const auth = {
     const payload = await response.json();
 
     if (!response.ok || !payload?.accessToken || !payload?.user) {
-      return { data: { user: null, session: null }, error: { message: payload?.message || payload?.error || 'Login failed' } };
+      return {
+        data: { user: null, session: null },
+        error: {
+          message: payload?.message || payload?.error || 'Login failed',
+          code: payload?.code,
+        },
+      };
     }
 
     const user = mapBackendUser(payload.user);
@@ -795,8 +813,10 @@ const auth = {
 
     const movieTeamFromRedirect = redirectTo.includes('movie_team=true');
     const isMovieTeamFlow = movieTeamCookie === 'true' || movieTeamFromRedirect || pendingSignup?.role === 'movie_team';
+    const intent = pendingSignup ? 'signup' : 'signin';
 
     const params = new URLSearchParams();
+    params.set('intent', intent);
     params.set('role', isMovieTeamFlow ? 'movie_team' : pendingSignup?.role || 'user');
     params.set('movie_team', isMovieTeamFlow ? 'true' : 'false');
 

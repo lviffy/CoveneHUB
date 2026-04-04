@@ -73,6 +73,11 @@ function sanitizeRole(role?: string): 'user' | 'movie_team' {
   return 'user';
 }
 
+function sanitizeAuthIntent(intent?: string): 'signin' | 'signup' {
+  if (intent === 'signup') return 'signup';
+  return 'signin';
+}
+
 function oauthErrorRedirect(code: string, details: string) {
   const url = new URL('/auth/error', env.FRONTEND_ORIGIN);
   url.searchParams.set('error', code);
@@ -143,12 +148,14 @@ authRouter.get('/google', async (req, res) => {
   }
 
   const role = sanitizeRole(typeof req.query.role === 'string' ? req.query.role : undefined);
+  const intent = sanitizeAuthIntent(typeof req.query.intent === 'string' ? req.query.intent : undefined);
   const city = typeof req.query.city === 'string' ? req.query.city.trim().slice(0, 120) : '';
   const phone = typeof req.query.phone === 'string' ? req.query.phone.trim().slice(0, 32) : '';
   const movieTeam = req.query.movie_team === 'true';
 
   const state = jwt.sign(
     {
+      intent,
       role: movieTeam ? 'movie_team' : role,
       city,
       phone,
@@ -195,9 +202,10 @@ authRouter.get('/google/callback', async (req, res) => {
     return res.redirect(oauthErrorRedirect('invalid_callback', 'Missing OAuth state token.'));
   }
 
-  let oauthState: { role?: string; city?: string; phone?: string; movieTeam?: boolean };
+  let oauthState: { intent?: string; role?: string; city?: string; phone?: string; movieTeam?: boolean };
   try {
     oauthState = jwt.verify(stateToken, env.JWT_ACCESS_SECRET) as {
+      intent?: string;
       role?: string;
       city?: string;
       phone?: string;
@@ -254,9 +262,18 @@ authRouter.get('/google/callback', async (req, res) => {
     }
 
     const normalizedRole = sanitizeRole(oauthState.role);
+    const normalizedIntent = sanitizeAuthIntent(oauthState.intent);
     const requestedBackendRole = normalizedRole === 'movie_team' ? 'organizer' : 'attendee';
+    const movieTeamFlow = oauthState.movieTeam === true || normalizedRole === 'movie_team';
 
     let user = await UserModel.findOne({ email: googleUser.email });
+    if (!user && normalizedIntent === 'signin') {
+      const redirectTarget = new URL(movieTeamFlow ? '/movie-team-login' : '/login', env.FRONTEND_ORIGIN);
+      redirectTarget.searchParams.set('error', 'user_not_found');
+      redirectTarget.searchParams.set('email', googleUser.email);
+      return res.redirect(redirectTarget.toString());
+    }
+
     if (!user) {
       const passwordHash = await bcrypt.hash(randomBytes(32).toString('hex'), 10);
       user = await UserModel.create({
@@ -269,6 +286,16 @@ authRouter.get('/google/callback', async (req, res) => {
       });
     } else {
       let shouldSave = false;
+      const fallbackName = user.email.split('@')[0];
+      const googleDisplayName = googleUser.name || googleUser.given_name;
+
+      if (
+        googleDisplayName &&
+        (!user.fullName || user.fullName.trim().length < 2 || user.fullName === fallbackName)
+      ) {
+        user.fullName = googleDisplayName;
+        shouldSave = true;
+      }
 
       if (requestedBackendRole === 'organizer' && user.role === 'attendee') {
         user.role = 'organizer';
@@ -319,12 +346,12 @@ authRouter.post('/login', async (req, res) => {
   const { email, password } = parsed.data;
   const user = await UserModel.findOne({ email });
   if (!user) {
-    return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    return res.status(404).json({ success: false, code: 'USER_NOT_FOUND', message: 'No account found for this email. Please sign up first.' });
   }
 
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) {
-    return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    return res.status(401).json({ success: false, code: 'INVALID_CREDENTIALS', message: 'Incorrect email or password. Please try again.' });
   }
 
   const payload = { sub: String(user._id), role: user.role, tenantId: user.tenantId };

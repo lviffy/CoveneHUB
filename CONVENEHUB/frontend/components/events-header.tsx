@@ -12,7 +12,7 @@ export const EventsHeader = () => {
     const [scrolled, setScrolled] = React.useState(false)
     const [user, setUser] = React.useState<any>(null)
     const { scrollYProgress } = useScroll()
-    const supabase = createClient()
+    const supabase = React.useMemo(() => createClient(), [])
 
     React.useEffect(() => {
         const unsubscribe = scrollYProgress.on('change', (latest) => {
@@ -35,7 +35,7 @@ export const EventsHeader = () => {
         })
 
         return () => subscription.unsubscribe()
-    }, [supabase.auth])
+    }, [supabase])
 
     return (
         <header className="fixed top-0 left-0 right-0 z-[999]">

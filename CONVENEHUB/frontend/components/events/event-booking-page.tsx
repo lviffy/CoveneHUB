@@ -117,7 +117,7 @@ export default function EventBookingPage({ eventId }: EventBookingPageProps) {
     try {
       // Use public API to get accurate booking count (bypasses RLS)
       // Add cache busting parameter to ensure fresh data
-      const response = await fetch(`/api/events/public?t=${Date.now()}`, {
+      const response = await fetch(`/api/v1/events/public?t=${Date.now()}`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache'

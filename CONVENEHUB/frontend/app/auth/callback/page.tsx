@@ -3,17 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
+import { normalizeAuthUser } from '@/lib/supabase/client';
 
 const ACCESS_TOKEN_KEY = 'convenehub_access_token';
 const REFRESH_TOKEN_KEY = 'convenehub_refresh_token';
 const USER_KEY = 'convenehub_user';
 const AUTH_EVENT = 'convenehub_auth_state_change';
-
-type OAuthUser = {
-  id: string;
-  email: string;
-  role?: string;
-};
 
 function clearLegacyOAuthCookies() {
   if (typeof document === 'undefined') return;
@@ -48,7 +43,7 @@ export default function AuthCallbackPage() {
     }
 
     try {
-      const user = JSON.parse(userJson) as OAuthUser;
+      const user = normalizeAuthUser(JSON.parse(userJson));
 
       localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
       if (refreshToken) {

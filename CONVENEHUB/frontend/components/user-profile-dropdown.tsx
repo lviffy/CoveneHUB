@@ -24,7 +24,7 @@ export function UserProfileDropdown() {
   const [totalEventsAttended, setTotalEventsAttended] = React.useState(0);
   const router = useRouter();
   const { toast } = useToast();
-  const supabase = createClient();
+  const supabase = React.useMemo(() => createClient(), []);
 
   React.useEffect(() => {
     const getUser = async () => {

@@ -26,7 +26,7 @@ export default function EventsListSection() {
   const [cities, setCities] = useState<string[]>(["All"])
   const [user, setUser] = useState<any>(null)
   const [userBookings, setUserBookings] = useState<Set<string>>(new Set())
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   // Clear URL filters
   const clearFilters = () => {
@@ -44,7 +44,7 @@ export default function EventsListSection() {
 
       // Use public API endpoint that bypasses RLS to get accurate booking counts
       // Add cache busting parameter to ensure fresh data
-      const response = await fetch(`/api/events/public?t=${Date.now()}`, {
+      const response = await fetch(`/api/v1/events/public?t=${Date.now()}`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache'
@@ -103,7 +103,7 @@ export default function EventsListSection() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [supabase])
 
   // Fetch user's bookings
   const fetchUserBookings = async (userId: string) => {
@@ -158,7 +158,7 @@ export default function EventsListSection() {
       clearTimeout(debounceTimer)
       channel.unsubscribe()
     }
-  }, [user, fetchEvents])
+  }, [user, fetchEvents, supabase])
 
   // Memoize filtered events to prevent unnecessary recalculations
   const filteredEvents = useMemo(() => {

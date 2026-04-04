@@ -14,6 +14,27 @@ This is the new separate implementation workspace for ConveneHub.
    npm install
 2. Copy env file and update values:
    cp backend/.env.example backend/.env
+
+### Start MongoDB (Docker)
+
+If this is your first run, create and start the MongoDB container:
+
+```bash
+docker run -d --name convenehub-mongo -p 27017:27017 -v convenehub-mongo-data:/data/db mongo:7
+```
+
+If the container already exists, start it with:
+
+```bash
+docker start convenehub-mongo
+```
+
+Optional health check:
+
+```bash
+docker exec convenehub-mongo mongosh --quiet --eval "db.adminCommand({ ping: 1 })"
+```
+
 3. Run backend:
    npm run dev:backend
 4. Run frontend in another terminal:
