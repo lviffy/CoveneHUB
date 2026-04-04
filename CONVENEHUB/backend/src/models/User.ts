@@ -3,8 +3,10 @@ import { UserRole } from '../types/common';
 
 interface UserDocument {
   fullName: string;
+  name?: string;
   email: string;
   passwordHash: string;
+  password?: string;
   role: UserRole;
   tenantId?: string;
   campusId?: string;
@@ -14,9 +16,11 @@ interface UserDocument {
 
 const userSchema = new Schema<UserDocument>(
   {
-    fullName: { type: String, required: true, trim: true },
+    // Keep fullName/passwordHash for existing APIs while exposing name/password aliases
+    // to match the documented collection shape.
+    fullName: { type: String, required: true, trim: true, alias: 'name' },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    passwordHash: { type: String, required: true },
+    passwordHash: { type: String, required: true, alias: 'password' },
     role: { type: String, enum: ['admin', 'organizer', 'promoter', 'attendee'], default: 'attendee' },
     tenantId: { type: String },
     campusId: { type: String },

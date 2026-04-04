@@ -16,6 +16,7 @@ interface EventDocument {
   venue: string;
   city?: string;
   dateTime: Date;
+  date?: Date;
   capacity: number;
   remaining: number;
   status: 'draft' | 'published' | 'closed';
@@ -41,7 +42,8 @@ const eventSchema = new Schema<EventDocument>(
     description: { type: String },
     venue: { type: String, required: true },
     city: { type: String },
-    dateTime: { type: Date, required: true },
+    // Alias keeps "date" available for the documented schema while preserving existing APIs.
+    dateTime: { type: Date, required: true, alias: 'date' },
     capacity: { type: Number, required: true, min: 1 },
     remaining: { type: Number, required: true, min: 0 },
     status: { type: String, enum: ['draft', 'published', 'closed'], default: 'draft' },

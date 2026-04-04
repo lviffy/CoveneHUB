@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 
 interface CommissionDocument {
   promoterId: string;
+  userId?: string;
   bookingId: string;
   eventId: string;
   referralCode: string;
@@ -11,7 +12,7 @@ interface CommissionDocument {
 
 const commissionSchema = new Schema<CommissionDocument>(
   {
-    promoterId: { type: String, required: true },
+    promoterId: { type: String, required: true, alias: 'userId' },
     bookingId: { type: String, required: true },
     eventId: { type: String, required: true },
     referralCode: { type: String, required: true },
