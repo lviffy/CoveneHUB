@@ -7,7 +7,7 @@ import { OTPInput } from '@/components/ui/otp-input';
 import { useToast } from '@/hooks/use-toast';
 import { Spinner } from '@/components/ui/spinner';
 import { Mail, RefreshCw, AlertCircle } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 
 interface OTPVerificationModalProps {
   open: boolean;

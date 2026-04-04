@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import { logger } from '@/lib/logger';
 
 // This endpoint cleans up pending payments that have timed out

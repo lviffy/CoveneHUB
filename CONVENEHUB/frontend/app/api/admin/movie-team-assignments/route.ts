@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 
 // GET all movie team assignments
 export async function GET() {
@@ -22,7 +22,7 @@ export async function GET() {
       .eq('id', currentUser.id)
       .single();
 
-    if (!profile || (profile as any).role !== 'eon_team') {
+    if (!profile || (profile as any).role !== 'admin_team') {
       return NextResponse.json(
         { error: 'Unauthorized - ConveneHub team access required' },
         { status: 403 }
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       .eq('id', currentUser.id)
       .single();
 
-    if (!profile || (profile as any).role !== 'eon_team') {
+    if (!profile || (profile as any).role !== 'admin_team') {
       return NextResponse.json(
         { error: 'Unauthorized - ConveneHub team access required' },
         { status: 403 }
@@ -145,7 +145,7 @@ export async function DELETE(request: Request) {
       .eq('id', currentUser.id)
       .single();
 
-    if (!profile || (profile as any).role !== 'eon_team') {
+    if (!profile || (profile as any).role !== 'admin_team') {
       return NextResponse.json(
         { error: 'Unauthorized - ConveneHub team access required' },
         { status: 403 }

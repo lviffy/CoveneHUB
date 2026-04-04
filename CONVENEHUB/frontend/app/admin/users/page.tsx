@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -49,7 +49,7 @@ interface User {
   phone?: string;
   full_name: string;
   city: string;
-  role: 'user' | 'movie_team' | 'eon_team';
+  role: 'user' | 'movie_team' | 'admin_team';
   created_at: string;
 }
 
@@ -95,7 +95,7 @@ export default function UserManagementPage() {
     }
   };
 
-  const updateUserRole = async (userId: string, newRole: 'user' | 'movie_team' | 'eon_team') => {
+  const updateUserRole = async (userId: string, newRole: 'user' | 'movie_team' | 'admin_team') => {
     try {
       setUpdating(userId);
 
@@ -163,7 +163,7 @@ export default function UserManagementPage() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'eon_team':
+      case 'admin_team':
         return 'bg-purple-500 hover:bg-purple-600';
       case 'movie_team':
         return 'bg-blue-500 hover:bg-blue-600';
@@ -174,7 +174,7 @@ export default function UserManagementPage() {
 
   const getRoleLabel = (role: string) => {
     switch (role) {
-      case 'eon_team':
+      case 'admin_team':
         return 'ConveneHub Team';
       case 'movie_team':
         return 'Event Operations';
@@ -258,7 +258,7 @@ export default function UserManagementPage() {
                             <SelectContent>
                               <SelectItem value="user">User</SelectItem>
                               <SelectItem value="movie_team">Event Operations</SelectItem>
-                              <SelectItem value="eon_team">ConveneHub Team</SelectItem>
+                              <SelectItem value="admin_team">ConveneHub Team</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>

@@ -1,5 +1,5 @@
 type BackendRole = 'admin' | 'organizer' | 'promoter' | 'attendee';
-type FrontendRole = 'eon_team' | 'movie_team' | 'promoter' | 'user';
+type FrontendRole = 'admin_team' | 'movie_team' | 'promoter' | 'user';
 
 type AuthUser = {
   id: string;
@@ -43,14 +43,14 @@ const API_BASE = '/api/v1';
 let refreshInFlight: Promise<string | null> | null = null;
 
 function mapRoleToFrontend(role?: string): FrontendRole {
-  if (role === 'admin' || role === 'eon_team') return 'eon_team';
+  if (role === 'admin' || role === 'admin_team') return 'admin_team';
   if (role === 'organizer' || role === 'movie_team') return 'movie_team';
   if (role === 'promoter') return 'promoter';
   return 'user';
 }
 
 function mapRoleToBackend(role?: string): BackendRole {
-  if (role === 'eon_team' || role === 'admin') return 'admin';
+  if (role === 'admin_team' || role === 'admin') return 'admin';
   if (role === 'movie_team' || role === 'organizer') return 'organizer';
   if (role === 'promoter') return 'promoter';
   return 'attendee';

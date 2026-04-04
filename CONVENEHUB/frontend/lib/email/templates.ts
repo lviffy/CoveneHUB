@@ -16,7 +16,7 @@ interface SettlementDetails {
   event_date: string;
   gross_revenue: number;
   razorpay_fees: number;
-  eonverse_commission: number;
+  platform_commission: number;
   net_payout: number;
   tickets_sold: number;
   settlement_status: string;
@@ -630,7 +630,7 @@ export const settlementReportTemplate = (details: SettlementDetails) => {
                 </div>
                 <div class="financial-row deduction">
                   <span class="financial-label">CONVENEHUB Commission (10%)</span>
-                  <span class="financial-value">-${formatCurrency(details.eonverse_commission)}</span>
+                  <span class="financial-value">-${formatCurrency(details.platform_commission)}</span>
                 </div>
                 <div class="financial-row total">
                   <span class="financial-label">Net Payout</span>
@@ -699,7 +699,7 @@ Tickets Sold: ${details.tickets_sold}
 FINANCIAL BREAKDOWN
 Gross Revenue: ${formatCurrency(details.gross_revenue)}
 Razorpay Fees (2%): -${formatCurrency(details.razorpay_fees)}
-CONVENEHUB Commission (10%): -${formatCurrency(details.eonverse_commission)}
+CONVENEHUB Commission (10%): -${formatCurrency(details.platform_commission)}
 ─────────────────────────────────
 Net Payout: ${formatCurrency(details.net_payout)}
 

@@ -7,7 +7,7 @@ import { ScanLine, ClipboardList, BarChart3, Calendar, MapPin, Users, LogOut, Ho
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';

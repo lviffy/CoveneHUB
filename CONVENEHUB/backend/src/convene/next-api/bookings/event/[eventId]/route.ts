@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 
 // GET /api/bookings/event/[eventId] - Get all bookings for an event (admin/movie_team only)
 export async function GET(
@@ -26,7 +26,7 @@ export async function GET(
       .eq('id', user.id)
       .single();
 
-    // Check if user has permission (eon_team or movie_team assigned to this event)
+    // Check if user has permission (admin_team or movie_team assigned to this event)
     if ((profile as any)?.role === 'user') {
       return NextResponse.json(
         { error: 'Forbidden. You do not have permission to view event bookings.' },

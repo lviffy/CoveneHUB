@@ -32,8 +32,8 @@ async function checkDatabase() {
     console.log(` - ${p.email || p.id} (${p.full_name})`);
   });
 
-  const eonTeam = profiles.filter(p => p.role === 'eon_team');
-  console.log(`ConveneHub Team members: ${eonTeam.length}`);
+  const adminTeam = profiles.filter(p => p.role === 'admin_team');
+  console.log(`ConveneHub Team members: ${adminTeam.length}`);
 
   // Check if we can read auth users (requires service role)
   const { data: { users }, error: authError } = await supabase.auth.admin.listUsers();

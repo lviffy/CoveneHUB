@@ -23,7 +23,7 @@ test.describe('Events API Integration', () => {
       password: 'Admin123!',
       email_confirm: true,
       user_metadata: {
-        role: 'eon_team',
+        role: 'admin_team',
         full_name: 'Test Admin',
         city: 'Mumbai',
       },
@@ -234,7 +234,7 @@ test.describe('Events API Integration', () => {
 });
 
 test.describe('Events API Authorization', () => {
-  test('POST /api/admin/events - requires eon_team role', async ({ request }) => {
+  test('POST /api/admin/events - requires admin_team role', async ({ request }) => {
     const response = await request.post('/api/admin/events', {
       data: {
         title: 'Unauthorized Event',
@@ -245,7 +245,7 @@ test.describe('Events API Authorization', () => {
     expect([401, 403]).toContain(response.status());
   });
 
-  test('PUT /api/admin/events - requires eon_team role', async ({ request }) => {
+  test('PUT /api/admin/events - requires admin_team role', async ({ request }) => {
     const response = await request.put('/api/admin/events', {
       data: {
         event_id: 'test-event-id',
@@ -256,7 +256,7 @@ test.describe('Events API Authorization', () => {
     expect([401, 403]).toContain(response.status());
   });
 
-  test('DELETE /api/admin/events - requires eon_team role', async ({ request }) => {
+  test('DELETE /api/admin/events - requires admin_team role', async ({ request }) => {
     const response = await request.delete('/api/admin/events', {
       data: {
         event_id: 'test-event-id',

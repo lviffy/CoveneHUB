@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -129,7 +129,7 @@ export function UserProfileDropdown() {
             <p className="text-sm font-medium leading-none">{fullName}</p>
             <p className="text-xs leading-none text-muted-foreground">{email}</p>
             <p className="text-xs leading-none text-blue-600 capitalize mt-1">
-              {role === 'eon_team' ? 'ConveneHub Team' : role === 'movie_team' ? 'Event Operations' : 'User'}
+              {role === 'admin_team' ? 'ConveneHub Team' : role === 'movie_team' ? 'Event Operations' : 'User'}
             </p>
           </div>
         </DropdownMenuLabel>

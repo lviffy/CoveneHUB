@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { Spinner } from '@/components/ui/spinner';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: ('user' | 'movie_team' | 'eon_team')[];
+  allowedRoles?: ('user' | 'movie_team' | 'admin_team')[];
   redirectTo?: string;
 }
 

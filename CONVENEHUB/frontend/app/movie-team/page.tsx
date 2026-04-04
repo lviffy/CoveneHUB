@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server';
+import { createServerClient } from '@/lib/convene/server';
 import { redirect } from 'next/navigation';
 import { MovieTeamDashboardLazy } from '@/components/lazy-components';
 

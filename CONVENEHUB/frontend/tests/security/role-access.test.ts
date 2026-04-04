@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 // Test helper to authenticate as different roles
-async function loginAs(page: Page, role: 'user' | 'movie_team' | 'eon_team') {
+async function loginAs(page: Page, role: 'user' | 'movie_team' | 'admin_team') {
   const credentials = {
     user: {
       email: 'testuser@example.com',
@@ -17,7 +17,7 @@ async function loginAs(page: Page, role: 'user' | 'movie_team' | 'eon_team') {
       email: 'movieteam@example.com',
       password: 'MovieTeam123!',
     },
-    eon_team: {
+    admin_team: {
       email: 'admin@convenehub.com',
       password: 'Admin123!',
     },
@@ -161,15 +161,15 @@ test.describe('Movie Team Role Access Control', () => {
 });
 
 test.describe('ConveneHub Team (Admin) Role Access Control', () => {
-  test('eon_team can access admin dashboard', async ({ page }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can access admin dashboard', async ({ page }) => {
+    await loginAs(page, 'admin_team');
     await page.goto('/admin');
     await expect(page).toHaveURL('/admin');
     await expect(page.locator('h1')).toContainText('Admin');
   });
 
-  test('eon_team can create events', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can create events', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.post('/api/admin/events', {
       data: {
@@ -188,8 +188,8 @@ test.describe('ConveneHub Team (Admin) Role Access Control', () => {
     expect(response.ok()).toBeTruthy();
   });
 
-  test('eon_team can update events', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can update events', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.put('/api/admin/events', {
       data: {
@@ -201,8 +201,8 @@ test.describe('ConveneHub Team (Admin) Role Access Control', () => {
     expect(response.status()).not.toBe(403);
   });
 
-  test('eon_team can delete events', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can delete events', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.delete('/api/admin/events', {
       data: {
@@ -213,8 +213,8 @@ test.describe('ConveneHub Team (Admin) Role Access Control', () => {
     expect(response.status()).not.toBe(403);
   });
 
-  test('eon_team can view all users', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can view all users', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.get('/api/admin/users');
     expect(response.ok()).toBeTruthy();
@@ -223,8 +223,8 @@ test.describe('ConveneHub Team (Admin) Role Access Control', () => {
     expect(data.users).toBeDefined();
   });
 
-  test('eon_team can update user roles', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can update user roles', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.post('/api/admin/users/update-role', {
       data: {
@@ -236,8 +236,8 @@ test.describe('ConveneHub Team (Admin) Role Access Control', () => {
     expect(response.status()).not.toBe(403);
   });
 
-  test('eon_team can delete users', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can delete users', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.delete('/api/admin/users/delete', {
       data: {
@@ -248,8 +248,8 @@ test.describe('ConveneHub Team (Admin) Role Access Control', () => {
     expect(response.status()).not.toBe(403);
   });
 
-  test('eon_team can assign movie team members', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can assign movie team members', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.post('/api/admin/movie-team-assignments', {
       data: {
@@ -261,15 +261,15 @@ test.describe('ConveneHub Team (Admin) Role Access Control', () => {
     expect(response.status()).not.toBe(403);
   });
 
-  test('eon_team can export bookings', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can export bookings', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.get('/api/admin/events/test-event-id/export-bookings');
     expect(response.status()).not.toBe(403);
   });
 
-  test('eon_team can export check-ins', async ({ page, request }) => {
-    await loginAs(page, 'eon_team');
+  test('admin_team can export check-ins', async ({ page, request }) => {
+    await loginAs(page, 'admin_team');
     
     const response = await request.get('/api/admin/events/test-event-id/export-checkins');
     expect(response.status()).not.toBe(403);

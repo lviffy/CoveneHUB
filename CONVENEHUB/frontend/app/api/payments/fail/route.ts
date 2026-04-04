@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 
 // Handle explicit payment failures
 // Called when payment fails at Razorpay or user cancels

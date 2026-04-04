@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     }
 
     // Validate role
-    if (!['user', 'movie_team', 'eon_team'].includes(role)) {
+    if (!['user', 'movie_team', 'admin_team'].includes(role)) {
       return NextResponse.json(
         { error: 'Invalid role' },
         { status: 400 }
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       .eq('id', currentUser.id)
       .single() as { data: { role: string } | null; error: any };
 
-    if (profileCheckError || !currentProfile || currentProfile.role !== 'eon_team') {
+    if (profileCheckError || !currentProfile || currentProfile.role !== 'admin_team') {
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },
         { status: 403 }

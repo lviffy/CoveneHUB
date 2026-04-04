@@ -70,7 +70,7 @@ export default function ProfileModal({
 
   const userInitial = displayName.charAt(0).toUpperCase();
   const roleLabels: Record<string, string> = {
-    eon_team: 'CONVENEHUB Team',
+    admin_team: 'CONVENEHUB Team',
     movie_team: 'Event Operations',
     user: 'General User'
   };

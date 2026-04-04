@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 
 export async function GET() {
   try {
@@ -21,7 +21,7 @@ export async function GET() {
       .eq('id', currentUser.id)
       .single();
 
-    if (!currentProfile || (currentProfile as any).role !== 'eon_team') {
+    if (!currentProfile || (currentProfile as any).role !== 'admin_team') {
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },
         { status: 403 }

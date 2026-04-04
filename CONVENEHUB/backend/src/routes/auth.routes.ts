@@ -11,7 +11,7 @@ import { requireAuth } from '../middlewares/auth.middleware';
 export const authRouter = Router();
 
 const frontendToBackendRole: Record<string, 'admin' | 'organizer' | 'promoter' | 'attendee'> = {
-  eon_team: 'admin',
+  admin_team: 'admin',
   movie_team: 'organizer',
   user: 'attendee',
   admin: 'admin',
@@ -20,8 +20,8 @@ const frontendToBackendRole: Record<string, 'admin' | 'organizer' | 'promoter' |
   attendee: 'attendee',
 };
 
-const backendToFrontendRole: Record<'admin' | 'organizer' | 'promoter' | 'attendee', 'eon_team' | 'movie_team' | 'promoter' | 'user'> = {
-  admin: 'eon_team',
+const backendToFrontendRole: Record<'admin' | 'organizer' | 'promoter' | 'attendee', 'admin_team' | 'movie_team' | 'promoter' | 'user'> = {
+  admin: 'admin_team',
   organizer: 'movie_team',
   promoter: 'promoter',
   attendee: 'user',
@@ -90,7 +90,7 @@ const registerSchema = z.object({
   full_name: z.string().min(2).optional(),
   email: z.string().email(),
   password: z.string().min(6),
-  role: z.enum(['admin', 'organizer', 'promoter', 'attendee', 'eon_team', 'movie_team', 'user']).optional(),
+  role: z.enum(['admin', 'organizer', 'promoter', 'attendee', 'admin_team', 'movie_team', 'user']).optional(),
   tenantId: z.string().optional(),
   campusId: z.string().optional(),
   phone: z.string().optional(),

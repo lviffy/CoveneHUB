@@ -35,8 +35,8 @@ interface FinancialSummary {
   total_tickets_sold: number;
   gross_revenue: string;
   razorpay_fees: string;
-  eonverse_commission: string;
-  eonverse_commission_percentage: number;
+  platform_commission: string;
+  platform_commission_percentage: number;
   net_payout_to_movie_team: string;
 }
 
@@ -78,14 +78,14 @@ interface FinancialData {
     total_tickets_sold: number;
     total_gross_revenue: string;
     total_razorpay_fees: string;
-    total_eonverse_commission: string;
+    total_platform_commission: string;
     total_net_payout: string;
   };
   fee_structure: {
     razorpay_fee_percentage: number;
-    eonverse_commission_note?: string;
+    platform_commission_note?: string;
     razorpay_percentage?: number;
-    eonverse_percentage?: number;
+    platform_percentage?: number;
   };
 }
 
@@ -186,7 +186,7 @@ export default function FinancialDashboard() {
     rows.push(['Financial Summary', '', '', '', '']);
     rows.push(['Gross Revenue', '', parseFloat(event.financial_summary.gross_revenue).toFixed(2), '', '']);
     rows.push(['Razorpay Fees (2%)', '', parseFloat(event.financial_summary.razorpay_fees).toFixed(2), '', '']);
-    rows.push([`CONVENEHUB Commission (${event.financial_summary.eonverse_commission_percentage}%)`, '', parseFloat(event.financial_summary.eonverse_commission).toFixed(2), '', '']);
+    rows.push([`CONVENEHUB Commission (${event.financial_summary.platform_commission_percentage}%)`, '', parseFloat(event.financial_summary.platform_commission).toFixed(2), '', '']);
     rows.push(['NET PAYOUT', '', parseFloat(event.financial_summary.net_payout_to_movie_team).toFixed(2), '', '']);
 
     const csvContent = [
@@ -221,7 +221,7 @@ export default function FinancialDashboard() {
     rows.push(['Total Tickets Sold', data.summary.total_tickets_sold.toString()]);
     rows.push(['Total Gross Revenue', `₹${parseFloat(data.summary.total_gross_revenue).toFixed(2)}`]);
     rows.push(['Total Razorpay Fees', `₹${parseFloat(data.summary.total_razorpay_fees).toFixed(2)}`]);
-    rows.push(['Total CONVENEHUB Commission', `₹${parseFloat(data.summary.total_eonverse_commission).toFixed(2)}`]);
+    rows.push(['Total CONVENEHUB Commission', `₹${parseFloat(data.summary.total_platform_commission).toFixed(2)}`]);
     rows.push(['Total Net Payout', `₹${parseFloat(data.summary.total_net_payout).toFixed(2)}`]);
     rows.push(['']);
 
@@ -241,7 +241,7 @@ export default function FinancialDashboard() {
       rows.push(['Tickets Sold', event.financial_summary.total_tickets_sold.toString()]);
       rows.push(['Gross Revenue', `₹${parseFloat(event.financial_summary.gross_revenue).toFixed(2)}`]);
       rows.push(['Razorpay Fees (2%)', `₹${parseFloat(event.financial_summary.razorpay_fees).toFixed(2)}`]);
-      rows.push([`CONVENEHUB Commission (${event.financial_summary.eonverse_commission_percentage}%)`, `₹${parseFloat(event.financial_summary.eonverse_commission).toFixed(2)}`]);
+      rows.push([`CONVENEHUB Commission (${event.financial_summary.platform_commission_percentage}%)`, `₹${parseFloat(event.financial_summary.platform_commission).toFixed(2)}`]);
       rows.push(['Net Payout', `₹${parseFloat(event.financial_summary.net_payout_to_movie_team).toFixed(2)}`]);
       rows.push(['']);
       
@@ -513,7 +513,7 @@ export default function FinancialDashboard() {
     ? data.summary.total_tickets_sold / data.summary.total_events 
     : 0;
   const effectiveFeePercentage = parseFloat(data.summary.total_gross_revenue) > 0
-    ? ((parseFloat(data.summary.total_razorpay_fees) + parseFloat(data.summary.total_eonverse_commission)) / parseFloat(data.summary.total_gross_revenue)) * 100
+    ? ((parseFloat(data.summary.total_razorpay_fees) + parseFloat(data.summary.total_platform_commission)) / parseFloat(data.summary.total_gross_revenue)) * 100
     : 0;
   
   // Calculate settlement status
@@ -571,7 +571,7 @@ export default function FinancialDashboard() {
                 <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
               </div>
               <div className="text-lg sm:text-2xl font-bold text-green-600">
-                -{formatCurrency(parseFloat(data.summary.total_eonverse_commission))}
+                -{formatCurrency(parseFloat(data.summary.total_platform_commission))}
               </div>
             </div>
 
@@ -717,11 +717,11 @@ export default function FinancialDashboard() {
                         </span>
                       </td>
                       <td className="py-2 sm:py-3 px-2 sm:px-4 text-right font-medium text-green-600">
-                        -{formatCurrency(parseFloat(data.summary.total_eonverse_commission))}
+                        -{formatCurrency(parseFloat(data.summary.total_platform_commission))}
                       </td>
                       <td className="py-2 sm:py-3 px-2 sm:px-4 text-right text-gray-600">
                         {parseFloat(data.summary.total_gross_revenue) > 0 
-                          ? ((parseFloat(data.summary.total_eonverse_commission) / parseFloat(data.summary.total_gross_revenue)) * 100).toFixed(1)
+                          ? ((parseFloat(data.summary.total_platform_commission) / parseFloat(data.summary.total_gross_revenue)) * 100).toFixed(1)
                           : 0}%
                       </td>
                     </tr>
@@ -828,10 +828,10 @@ export default function FinancialDashboard() {
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="text-xs text-gray-600 mb-1">
-                        CONVENEHUB Commission ({event.financial_summary.eonverse_commission_percentage}%)
+                        CONVENEHUB Commission ({event.financial_summary.platform_commission_percentage}%)
                       </div>
                       <div className="text-lg font-semibold text-green-600">
-                        -{formatCurrency(parseFloat(event.financial_summary.eonverse_commission))}
+                        -{formatCurrency(parseFloat(event.financial_summary.platform_commission))}
                       </div>
                     </div>
                     <div className="bg-blue-50 rounded-lg p-4 border-2 border-[#195ADC]">

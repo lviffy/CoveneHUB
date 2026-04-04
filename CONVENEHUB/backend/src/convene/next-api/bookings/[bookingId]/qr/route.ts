@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import { generateQRCode, type QRPayload } from '@/lib/qr-generator';
 
 // GET /api/bookings/[bookingId]/qr - Generate QR code for a booking
@@ -49,7 +49,7 @@ export async function GET(
       .single();
 
     const isOwner = (booking as any).user_id === user.id;
-    const isAdmin = (profile as any)?.role === 'eon_team';
+    const isAdmin = (profile as any)?.role === 'admin_team';
 
     if (!isOwner && !isAdmin) {
       return NextResponse.json(

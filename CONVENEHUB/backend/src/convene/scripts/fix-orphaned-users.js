@@ -38,7 +38,7 @@ async function fixOrphanedUsers() {
   for (const user of orphanedUsers) {
     const metadata = user.user_metadata || {};
     
-    // SECURITY: Sanitize role - never allow eon_team from metadata
+    // SECURITY: Sanitize role - never allow admin_team from metadata
     let role = 'user';
     if (metadata.role === 'movie_team') {
       role = 'movie_team';

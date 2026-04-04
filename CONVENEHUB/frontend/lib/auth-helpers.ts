@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import { Profile } from '@/types/database.types';
 
 /**
@@ -32,8 +32,8 @@ export async function checkAdminRole() {
   // Type cast to Profile (Supabase types need regeneration after migration)
   const typedProfile = profile as unknown as Profile;
 
-  // Check if role is admin (eon_team)
-  const isAdmin = typedProfile.role === 'eon_team';
+  // Check if role is admin (admin_team)
+  const isAdmin = typedProfile.role === 'admin_team';
 
   return { isAdmin, userId: user.id, profile: typedProfile };
 }

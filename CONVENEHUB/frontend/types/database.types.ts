@@ -92,7 +92,7 @@ export interface Profile {
   city: string
   phone?: string
   email?: string
-  role: 'user' | 'movie_team' | 'eon_team'
+  role: 'user' | 'movie_team' | 'admin_team'
   created_at: string
 }
 
@@ -109,7 +109,7 @@ export interface Event {
   capacity: number
   remaining: number
   ticket_price: number // decimal(10,2) - Price in INR, 0 for free events
-  eonverse_commission_percentage: number // decimal(5,2) - Commission rate (0-100), default 10%
+  platform_commission_percentage: number // decimal(5,2) - Commission rate (0-100), default 10%
   event_image?: string // Path to storage
   entry_instructions?: string
   terms?: string // Event-specific terms and conditions
@@ -154,7 +154,7 @@ export interface MovieTeamAssignment {
 export interface AuditLog {
   log_id: number // bigserial
   actor_id: string // FK to profiles.id
-  actor_role: 'eon_team' | 'movie_team' | 'user'
+  actor_role: 'admin_team' | 'movie_team' | 'user'
   action: string // e.g., CREATE_EVENT, CHECKIN, EXPORT_CSV
   entity: string // events, bookings, checkins
   entity_id: string // uuid

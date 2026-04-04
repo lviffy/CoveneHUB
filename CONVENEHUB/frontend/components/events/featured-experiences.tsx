@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/convene/client'
 import type { Event } from '@/types/database.types'
 
 interface CountdownProps {

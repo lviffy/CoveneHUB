@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import { checkAdminRole } from '@/lib/auth-helpers';
 import { NextRequest, NextResponse } from 'next/server';
 import { Coupon } from '@/types/database.types';

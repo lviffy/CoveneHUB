@@ -92,7 +92,7 @@ export interface Profile {
   city: string
   phone?: string
   email?: string
-  role: 'user' | 'movie_team' | 'eon_team'
+  role: 'user' | 'movie_team' | 'admin_team'
   created_at: string
 }
 
@@ -154,7 +154,7 @@ export interface MovieTeamAssignment {
 export interface AuditLog {
   log_id: number // bigserial
   actor_id: string // FK to profiles.id
-  actor_role: 'eon_team' | 'movie_team' | 'user'
+  actor_role: 'admin_team' | 'movie_team' | 'user'
   action: string // e.g., CREATE_EVENT, CHECKIN, EXPORT_CSV
   entity: string // events, bookings, checkins
   entity_id: string // uuid

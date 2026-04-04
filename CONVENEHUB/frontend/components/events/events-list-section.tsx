@@ -7,7 +7,7 @@ import { Calendar, MapPin, Clock, Users, ArrowRight, Circle, Film, CheckCircle2,
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { Event } from '@/types/database.types'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/convene/client'
 import { Spinner } from '@/components/ui/spinner'
 
 export default function EventsListSection() {

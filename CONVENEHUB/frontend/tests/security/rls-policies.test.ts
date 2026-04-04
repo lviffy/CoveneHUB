@@ -77,7 +77,7 @@ test.describe('RLS Policies - Profiles Table', () => {
     expect(error.message).toContain('violates row-level security policy');
   });
 
-  test('eon_team can view all profiles', async () => {
+  test('admin_team can view all profiles', async () => {
     // Test that ConveneHub team members can SELECT all profiles
     const { data, error } = await adminClient
       .from('profiles')
@@ -133,7 +133,7 @@ test.describe('RLS Policies - Events Table', () => {
     expect(error.message).toContain('violates row-level security policy');
   });
 
-  test('eon_team can create events', async () => {
+  test('admin_team can create events', async () => {
     // Test that ConveneHub team can INSERT events
     const { data, error } = await adminClient
       .from('events')
@@ -165,7 +165,7 @@ test.describe('RLS Policies - Events Table', () => {
     expect(error).toBeTruthy();
   });
 
-  test('eon_team can update events', async () => {
+  test('admin_team can update events', async () => {
     // Test that ConveneHub team can UPDATE events
     const { error } = await adminClient
       .from('events')
@@ -242,7 +242,7 @@ test.describe('RLS Policies - Bookings Table', () => {
     expect(error).toBeTruthy();
   });
 
-  test('eon_team can view all bookings', async () => {
+  test('admin_team can view all bookings', async () => {
     // Test that ConveneHub team can SELECT all bookings
     const { data, error } = await adminClient
       .from('bookings')
@@ -290,7 +290,7 @@ test.describe('RLS Policies - Movie Team Assignments', () => {
     expect(error).toBeTruthy();
   });
 
-  test('eon_team can create assignments', async () => {
+  test('admin_team can create assignments', async () => {
     // Test that ConveneHub team can INSERT assignments
     const { error } = await adminClient
       .from('movie_team_assignments')
@@ -302,7 +302,7 @@ test.describe('RLS Policies - Movie Team Assignments', () => {
     expect(error).toBeNull();
   });
 
-  test('eon_team can delete assignments', async () => {
+  test('admin_team can delete assignments', async () => {
     // Test that ConveneHub team can DELETE assignments
     const { error } = await adminClient
       .from('movie_team_assignments')
@@ -328,7 +328,7 @@ test.describe('RLS Policies - Audit Logs', () => {
     expect(data).toBeNull();
   });
 
-  test('eon_team can view all audit logs', async () => {
+  test('admin_team can view all audit logs', async () => {
     // Test that ConveneHub team can SELECT all audit logs
     const { data, error } = await adminClient
       .from('audit_logs')

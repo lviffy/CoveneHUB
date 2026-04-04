@@ -6,7 +6,7 @@ import { UserProfileDropdown } from '@/components/user-profile-dropdown'
 import React from 'react'
 import { useScroll, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/convene/client'
 
 export const EventsHeader = () => {
     const [scrolled, setScrolled] = React.useState(false)

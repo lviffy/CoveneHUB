@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { AdminDashboardLazy } from '@/components/lazy-components';
 import { Spinner } from '@/components/ui/spinner';
 import type { Profile } from '@/types/database.types';
@@ -42,7 +42,7 @@ export default function AdminPage() {
           created_at: session.user.created_at,
         };
 
-      if (finalProfile.role !== 'eon_team') {
+      if (finalProfile.role !== 'admin_team') {
         setAccessDenied(true);
         setLoading(false);
         return;

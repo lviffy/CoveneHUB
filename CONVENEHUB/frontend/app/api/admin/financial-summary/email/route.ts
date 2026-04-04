@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import nodemailer from 'nodemailer';
 import Decimal from 'decimal.js';
 
@@ -12,7 +12,7 @@ interface EventFinancial {
   total_revenue: string;
   total_bookings: number;
   total_tickets: number;
-  eonverse_commission_percentage: number;
+  platform_commission_percentage: number;
   is_settled: boolean;
 }
 
@@ -20,7 +20,7 @@ interface FinancialData {
   events: EventFinancial[];
   summary: {
     total_gross_revenue: string;
-    total_eonverse_commission: string;
+    total_platform_commission: string;
     total_net_payout: string;
     total_bookings?: number;
     total_tickets_sold: number;
@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user is eon_team
+    // Check if user is admin_team
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single() as { data: { role: string } | null; error: any };
 
-    if (profileError || !profile || profile.role !== 'eon_team') {
+    if (profileError || !profile || profile.role !== 'admin_team') {
       return NextResponse.json(
         { error: 'Forbidden: Only CONVENEHUB team members can access this' },
         { status: 403 }
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       total_revenue: event.financial_summary?.gross_revenue || '0',
       total_bookings: event.financial_summary?.total_bookings || 0,
       total_tickets: event.financial_summary?.total_tickets_sold || 0,
-      eonverse_commission_percentage: event.financial_summary?.eonverse_commission_percentage || 10,
+      platform_commission_percentage: event.financial_summary?.platform_commission_percentage || 10,
       is_settled: event.settlement_status === 'settled',
     }));
 
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     // Calculate summary metrics using the correct property paths
     const totalRevenue = new Decimal(data.summary?.total_gross_revenue || 0);
     const totalRazorpayFees = new Decimal(data.summary?.total_razorpay_fees || 0);
-    const totalConveneHubCommission = new Decimal(data.summary?.total_eonverse_commission || 0);
+    const totalConveneHubCommission = new Decimal(data.summary?.total_platform_commission || 0);
     const totalMovieTeamPayout = new Decimal(data.summary?.total_net_payout || 0);
     const totalBookings = data.summary?.total_bookings || 0;
     const totalTickets = data.summary?.total_tickets_sold || 0;
@@ -146,9 +146,9 @@ export async function POST(request: NextRequest) {
       data.events.forEach((event: EventFinancial) => {
         const eventRevenue = new Decimal(event.total_revenue || 0);
         const razorpayFees = eventRevenue.times(2).dividedBy(100); // 2% Razorpay fee
-        const commissionPercentage = event.eonverse_commission_percentage || 10;
-        const eonverseCommission = eventRevenue.times(commissionPercentage / 100);
-        const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(eonverseCommission);
+        const commissionPercentage = event.platform_commission_percentage || 10;
+        const platformCommission = eventRevenue.times(commissionPercentage / 100);
+        const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(platformCommission);
 
         // Sanitize fields for CSV
         const sanitize = (str: string) => {
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
           year: 'numeric',
         });
 
-        csvContent += `${sanitize(event.event_name)},${sanitize(formattedDate)},${sanitize(event.venue_name)},${sanitize(event.city)},₹${eventRevenue.toFixed(2)},₹${razorpayFees.toFixed(2)},${commissionPercentage}%,₹${eonverseCommission.toFixed(2)},₹${movieTeamPayout.toFixed(2)},${event.total_bookings},${event.total_tickets},${event.is_settled ? 'Settled' : 'Pending'}\n`;
+        csvContent += `${sanitize(event.event_name)},${sanitize(formattedDate)},${sanitize(event.venue_name)},${sanitize(event.city)},₹${eventRevenue.toFixed(2)},₹${razorpayFees.toFixed(2)},${commissionPercentage}%,₹${platformCommission.toFixed(2)},₹${movieTeamPayout.toFixed(2)},${event.total_bookings},${event.total_tickets},${event.is_settled ? 'Settled' : 'Pending'}\n`;
       });
     }
 
@@ -262,9 +262,9 @@ export async function POST(request: NextRequest) {
                   ${data.events && data.events.length > 0 ? data.events.map((event: EventFinancial) => {
                     const eventRevenue = new Decimal(event.total_revenue || 0);
                     const razorpayFees = eventRevenue.times(2).dividedBy(100); // 2% Razorpay fee
-                    const commissionPercentage = event.eonverse_commission_percentage || 10;
-                    const eonverseCommission = eventRevenue.times(commissionPercentage / 100);
-                    const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(eonverseCommission);
+                    const commissionPercentage = event.platform_commission_percentage || 10;
+                    const platformCommission = eventRevenue.times(commissionPercentage / 100);
+                    const movieTeamPayout = eventRevenue.minus(razorpayFees).minus(platformCommission);
 
                     return `
                       <tr>

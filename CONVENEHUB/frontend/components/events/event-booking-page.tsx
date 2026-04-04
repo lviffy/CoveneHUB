@@ -25,7 +25,7 @@ import { motion } from 'framer-motion'
 import { EventsHeader } from '@/components/events-header'
 import { cn } from '@/lib/utils'
 import type { Event } from '@/types/database.types'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/convene/client'
 import { Spinner } from '@/components/ui/spinner'
 import RazorpayCheckout from '@/components/payments/RazorpayCheckout'
 

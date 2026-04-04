@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server';
+import { createServerClient } from '@/lib/convene/server';
 import { redirect } from 'next/navigation';
 import { AdminDashboardLazy } from '@/components/lazy-components';
 
@@ -22,7 +22,7 @@ export default async function AdminPage() {
   const userRole = profile ? (profile as any).role || 'user' : 'user';
 
   // Check if user is part of CONVENEHUB team
-  if (userRole !== 'eon_team') {
+  if (userRole !== 'admin_team') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
         <div className="text-center p-8 bg-white rounded-lg shadow-xl max-w-md">
@@ -44,7 +44,7 @@ export default async function AdminPage() {
     id: session.user.id,
     full_name: session.user.user_metadata?.full_name || 'Admin User',
     city: session.user.user_metadata?.city || 'Unknown',
-    role: 'eon_team' as const,
+    role: 'admin_team' as const,
     created_at: session.user.created_at,
   };
 

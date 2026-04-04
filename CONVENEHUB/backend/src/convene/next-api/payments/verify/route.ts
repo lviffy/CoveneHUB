@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import { verifyPaymentSignature } from '@/lib/razorpay';
 import { sendBookingConfirmationWithMultipleTickets, sendPaymentReceipt } from '@/lib/email/service';
 import { format } from 'date-fns';

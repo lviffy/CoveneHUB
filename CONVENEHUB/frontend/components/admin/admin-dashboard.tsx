@@ -8,7 +8,7 @@ import CreateEventForm from './create-event-form';
 import EventsList from './events-list';
 import { Plus, Calendar, Users, Settings, LogOut, Home, DollarSign, BarChart3, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';

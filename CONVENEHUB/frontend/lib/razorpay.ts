@@ -92,13 +92,13 @@ export function verifyWebhookSignature(
  */
 export function calculateFinancials(grossAmount: number) {
   const gatewayFees = (grossAmount * PAYMENT_CONFIG.gatewayFeePercent) / 100;
-  const eonverseCommission = (grossAmount * PAYMENT_CONFIG.commissionPercent) / 100;
-  const netPayout = grossAmount - gatewayFees - eonverseCommission;
+  const platformCommission = (grossAmount * PAYMENT_CONFIG.commissionPercent) / 100;
+  const netPayout = grossAmount - gatewayFees - platformCommission;
   
   return {
     grossRevenue: parseFloat(grossAmount.toFixed(2)),
     gatewayFees: parseFloat(gatewayFees.toFixed(2)),
-    eonverseCommission: parseFloat(eonverseCommission.toFixed(2)),
+    platformCommission: parseFloat(platformCommission.toFixed(2)),
     netPayout: parseFloat(netPayout.toFixed(2)),
   };
 }

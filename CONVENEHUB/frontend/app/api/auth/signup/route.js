@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
 import { getPhoneVariants } from '@/lib/validation/phone';
@@ -124,7 +124,7 @@ export async function POST(request) {
     }
     
     // Validate role - only allow 'user' or 'movie_team' from signup
-    // 'eon_team' should only be assigned by admins
+    // 'admin_team' should only be assigned by admins
     const validRole = ['user', 'movie_team'].includes(role) ? role : 'user';
     
     const { data, error } = await supabase.auth.signUp({

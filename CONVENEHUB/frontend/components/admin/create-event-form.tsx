@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -51,7 +51,7 @@ const eventFormSchema = z.object({
   date_time: z.string().min(1, 'Date and time are required'),
   capacity: z.coerce.number().min(1, 'Capacity must be at least 1'),
   ticket_price: z.coerce.number().min(0, 'Price must be 0 or greater'),
-  eonverse_commission_percentage: z.coerce.number().min(0, 'Commission must be 0 or greater').max(100, 'Commission cannot exceed 100%'),
+  platform_commission_percentage: z.coerce.number().min(0, 'Commission must be 0 or greater').max(100, 'Commission cannot exceed 100%'),
   event_image: z.string().optional(),
   entry_instructions: z.string().optional(),
   terms: z.string().optional(),
@@ -84,7 +84,7 @@ export default function CreateEventForm({ userId }: CreateEventFormProps) {
       date_time: '',
       capacity: 50,
       ticket_price: 0,
-      eonverse_commission_percentage: 10,
+      platform_commission_percentage: 10,
       event_image: '',
       entry_instructions: '',
       terms: '',
@@ -110,7 +110,7 @@ export default function CreateEventForm({ userId }: CreateEventFormProps) {
           capacity: data.capacity,
           remaining: data.capacity, // Initialize remaining with capacity
           ticket_price: data.ticket_price,
-          eonverse_commission_percentage: data.eonverse_commission_percentage,
+          platform_commission_percentage: data.platform_commission_percentage,
           event_image: data.event_image || null,
           entry_instructions: data.entry_instructions || null,
           terms: data.terms || null,
@@ -127,7 +127,7 @@ export default function CreateEventForm({ userId }: CreateEventFormProps) {
       // Log the action in audit logs
       await supabase.from('audit_logs').insert({
         actor_id: userId,
-        actor_role: 'eon_team',
+        actor_role: 'admin_team',
         action: 'CREATE_EVENT',
         entity: 'events',
         entity_id: (event as any)?.event_id,
@@ -672,7 +672,7 @@ export default function CreateEventForm({ userId }: CreateEventFormProps) {
             {/* Commission Percentage */}
             <FormField
               control={form.control}
-              name="eonverse_commission_percentage"
+              name="platform_commission_percentage"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700 font-medium">CONVENEHUB Commission (%) *</FormLabel>

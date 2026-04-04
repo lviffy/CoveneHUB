@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
-import { normalizeAuthUser } from '@/lib/supabase/client';
+import { normalizeAuthUser } from '@/lib/convene/client';
 
 const ACCESS_TOKEN_KEY = 'convenehub_access_token';
 const REFRESH_TOKEN_KEY = 'convenehub_refresh_token';
@@ -17,7 +17,7 @@ function clearLegacyOAuthCookies() {
 }
 
 function getRedirectForRole(role?: string) {
-  if (role === 'eon_team' || role === 'admin') return '/admin';
+  if (role === 'admin_team' || role === 'admin') return '/admin';
   if (role === 'movie_team' || role === 'organizer') return '/movie-team';
   return '/events';
 }

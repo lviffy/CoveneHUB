@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 
 // PATCH /api/bookings/[bookingId]/update-tickets - Update ticket count for existing booking
 export async function PATCH(

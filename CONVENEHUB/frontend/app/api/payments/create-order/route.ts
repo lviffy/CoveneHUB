@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import { createClient as createSupabaseAdminClient } from '@supabase/supabase-js';
 import { razorpayInstance, PAYMENT_CONFIG } from '@/lib/razorpay';
 import Decimal from 'decimal.js';

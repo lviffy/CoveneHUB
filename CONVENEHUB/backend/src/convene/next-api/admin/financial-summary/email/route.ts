@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/convene/server';
 import nodemailer from 'nodemailer';
 import Decimal from 'decimal.js';
 
@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user is eon_team
+    // Check if user is admin_team
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single() as { data: { role: string } | null; error: any };
 
-    if (profileError || !profile || profile.role !== 'eon_team') {
+    if (profileError || !profile || profile.role !== 'admin_team') {
       return NextResponse.json(
         { error: 'Forbidden: Only CONVENEHUB team members can access this' },
         { status: 403 }

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/convene/client'
 import type { Event } from '@/types/database.types'
 import Image from 'next/image'
 

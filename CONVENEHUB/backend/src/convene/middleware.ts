@@ -78,7 +78,7 @@ export async function middleware(req: NextRequest) {
     // Redirect authenticated users away from login pages to their appropriate dashboard
     if (pathname === '/login') {
       const redirectUrl = req.nextUrl.clone();
-      if (userRole === 'eon_team') {
+      if (userRole === 'admin_team') {
         redirectUrl.pathname = '/admin';
       } else if (userRole === 'movie_team') {
         redirectUrl.pathname = '/movie-team';
@@ -93,7 +93,7 @@ export async function middleware(req: NextRequest) {
       const redirectUrl = req.nextUrl.clone();
       if (userRole === 'movie_team') {
         redirectUrl.pathname = '/movie-team';
-      } else if (userRole === 'eon_team') {
+      } else if (userRole === 'admin_team') {
         redirectUrl.pathname = '/admin';
       } else {
         redirectUrl.pathname = '/events';
@@ -101,9 +101,9 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
 
-    // Admin routes - only for eon_team
+    // Admin routes - only for admin_team
     if (pathname.startsWith('/admin')) {
-      if (userRole !== 'eon_team') {
+      if (userRole !== 'admin_team') {
         const redirectUrl = req.nextUrl.clone();
         redirectUrl.pathname = '/events';
         return NextResponse.redirect(redirectUrl);

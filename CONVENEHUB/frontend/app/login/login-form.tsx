@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/convene/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -88,7 +88,7 @@ export function LoginForm() {
     
     // Redirect based on role
     setTimeout(() => {
-      if (role === 'eon_team') {
+      if (role === 'admin_team') {
         window.location.href = '/admin';
       } else if (role === 'movie_team') {
         window.location.href = '/movie-team';
@@ -281,7 +281,7 @@ export function LoginForm() {
       // Small delay to ensure local auth state is persisted before navigation
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      if (userRole === 'eon_team') {
+      if (userRole === 'admin_team') {
         window.location.href = '/admin';
       } else if (userRole === 'movie_team') {
         window.location.href = '/movie-team';
