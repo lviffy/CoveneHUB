@@ -25,6 +25,6 @@
       "@vercel/analytics/next": ["./src/compat/vercel-analytics-next.tsx"]
     }
   },
-  "include": ["src", "app", "components", "hooks", "lib", "types", "utils", "next-env.d.ts"],
+  "include": ["src", "app", "components", "hooks", "lib", "types", "utils"],
   "exclude": ["node_modules", "app/api/**", "app/auth/callback/**"]
 }
