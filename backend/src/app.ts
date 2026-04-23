@@ -12,9 +12,22 @@ import { env } from './config/env';
 export function createApp() {
   const app = express();
   const uploadsDir = path.resolve(__dirname, '..', 'uploads');
+  const allowedOrigins = new Set(env.FRONTEND_ORIGINS);
 
   app.use(helmet());
-  app.use(cors({ origin: env.FRONTEND_ORIGIN, credentials: true }));
+  app.use(
+    cors({
+      origin(origin, callback) {
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+
+        callback(null, allowedOrigins.has(origin));
+      },
+      credentials: true,
+    })
+  );
   app.use(morgan('dev'));
   app.use(express.json({ limit: '10mb' }));
   app.use(cookieParser());

@@ -40,7 +40,8 @@ const ACCESS_TOKEN_KEY = 'convenehub_access_token';
 const REFRESH_TOKEN_KEY = 'convenehub_refresh_token';
 const USER_KEY = 'convenehub_user';
 const AUTH_EVENT = 'convenehub_auth_state_change';
-const API_BASE = '/api/v1';
+const API_ORIGIN = String(import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api/v1` : '/api/v1';
 
 let refreshInFlight: Promise<string | null> | null = null;
 

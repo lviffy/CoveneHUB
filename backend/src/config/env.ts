@@ -21,4 +21,14 @@ const envSchema = z.object({
   RAZORPAY_KEY_SECRET: z.string().optional(),
 });
 
-export const env = envSchema.parse(process.env);
+const parsed = envSchema.parse(process.env);
+
+const frontendOrigins = parsed.FRONTEND_ORIGIN.split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+export const env = {
+  ...parsed,
+  FRONTEND_ORIGIN: frontendOrigins[0] || 'http://localhost:5173',
+  FRONTEND_ORIGINS: frontendOrigins.length > 0 ? frontendOrigins : ['http://localhost:5173'],
+};

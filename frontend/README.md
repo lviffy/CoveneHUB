@@ -547,6 +547,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_production_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_production_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_production_service_role_key
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
+VITE_API_BASE_URL=https://your-backend-service.up.railway.app
 
 # Email configuration (if using SMTP)
 SMTP_HOST=smtp.gmail.com

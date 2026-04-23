@@ -1,4 +1,6 @@
-const UPLOADS_PREFIX = '/api/v1/uploads/';
+const API_ORIGIN = String(import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+const UPLOADS_PATH_PREFIX = '/api/v1/uploads/';
+const UPLOADS_PREFIX = API_ORIGIN ? `${API_ORIGIN}${UPLOADS_PATH_PREFIX}` : UPLOADS_PATH_PREFIX;
 
 function isAbsoluteUrl(value: string) {
   return /^https?:\/\//i.test(value);
@@ -20,6 +22,10 @@ export function resolveAssetUrl(value?: string | null) {
 
   if (trimmed.startsWith(UPLOADS_PREFIX)) {
     return trimmed;
+  }
+
+  if (trimmed.startsWith(UPLOADS_PATH_PREFIX)) {
+    return API_ORIGIN ? `${API_ORIGIN}${trimmed}` : trimmed;
   }
 
   if (trimmed.startsWith('/')) {
@@ -51,7 +57,7 @@ export function extractUploadPath(value?: string | null) {
       typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
     const url = new URL(trimmed, base);
 
-    if (url.pathname.startsWith(UPLOADS_PREFIX)) {
+    if (url.pathname.startsWith(UPLOADS_PATH_PREFIX)) {
       return normalize(url.pathname);
     }
 
