@@ -165,10 +165,141 @@ const DesktopFeaturesGrid = () => (
     </div>
 )
 
+function useVideoContrast(
+    videoRef: React.RefObject<HTMLVideoElement>,
+    textRef: React.RefObject<HTMLElement>,
+    threshold = 160,
+    sampleFps = 20
+) {
+    const [color, setColor] = useState<'#000' | '#fff'>('#fff')
+
+    useEffect(() => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })
+        if (!ctx) return
+
+        let rafId = 0
+        let lastSampleTime = 0
+        let lastColor: '#000' | '#fff' = '#fff'
+        const frameInterval = 1000 / sampleFps
+
+        const update = (now: number) => {
+            const video = videoRef.current
+            const text = textRef.current
+
+            if (!video || !text || video.readyState < 2) {
+                rafId = requestAnimationFrame(update)
+                return
+            }
+
+            if (now - lastSampleTime < frameInterval) {
+                rafId = requestAnimationFrame(update)
+                return
+            }
+            lastSampleTime = now
+
+            const videoRect = video.getBoundingClientRect()
+            const textRect = text.getBoundingClientRect()
+            if (
+                videoRect.width <= 0 ||
+                videoRect.height <= 0 ||
+                textRect.width <= 0 ||
+                textRect.height <= 0
+            ) {
+                rafId = requestAnimationFrame(update)
+                return
+            }
+
+            const intersectLeft = Math.max(textRect.left, videoRect.left)
+            const intersectTop = Math.max(textRect.top, videoRect.top)
+            const intersectRight = Math.min(textRect.right, videoRect.right)
+            const intersectBottom = Math.min(textRect.bottom, videoRect.bottom)
+            const intersectW = intersectRight - intersectLeft
+            const intersectH = intersectBottom - intersectTop
+            if (intersectW <= 0 || intersectH <= 0) {
+                rafId = requestAnimationFrame(update)
+                return
+            }
+
+            // Keep canvas tiny for performance while preserving luminance accuracy.
+            const targetW = 64
+            const targetH = Math.max(1, Math.round((intersectH / intersectW) * targetW))
+            canvas.width = targetW
+            canvas.height = targetH
+
+            const vw = video.videoWidth
+            const vh = video.videoHeight
+            if (!vw || !vh) {
+                rafId = requestAnimationFrame(update)
+                return
+            }
+
+            // Map screen-space sample area to source video pixels for object-cover rendering.
+            const coverScale = Math.max(videoRect.width / vw, videoRect.height / vh)
+            const renderedVideoW = vw * coverScale
+            const renderedVideoH = vh * coverScale
+            const offsetX = (videoRect.width - renderedVideoW) / 2
+            const offsetY = (videoRect.height - renderedVideoH) / 2
+
+            const localX = intersectLeft - videoRect.left
+            const localY = intersectTop - videoRect.top
+            const srcX = (localX - offsetX) / coverScale
+            const srcY = (localY - offsetY) / coverScale
+            const srcW = intersectW / coverScale
+            const srcH = intersectH / coverScale
+
+            const clampedX = Math.max(0, Math.min(vw - 1, srcX))
+            const clampedY = Math.max(0, Math.min(vh - 1, srcY))
+            const clampedW = Math.max(1, Math.min(vw - clampedX, srcW))
+            const clampedH = Math.max(1, Math.min(vh - clampedY, srcH))
+
+            ctx.drawImage(video, clampedX, clampedY, clampedW, clampedH, 0, 0, canvas.width, canvas.height)
+            const frame = ctx.getImageData(0, 0, canvas.width, canvas.height).data
+
+            let luminanceTotal = 0
+            for (let i = 0; i < frame.length; i += 4) {
+                luminanceTotal += 0.299 * frame[i] + 0.587 * frame[i + 1] + 0.114 * frame[i + 2]
+            }
+
+            const avg = luminanceTotal / (frame.length / 4)
+            const nextColor: '#000' | '#fff' = avg > threshold ? '#000' : '#fff'
+            if (nextColor !== lastColor) {
+                lastColor = nextColor
+                setColor(nextColor)
+            }
+
+            rafId = requestAnimationFrame(update)
+        }
+
+        rafId = requestAnimationFrame(update)
+        return () => cancelAnimationFrame(rafId)
+    }, [videoRef, textRef, threshold, sampleFps])
+
+    return color
+}
+
 export default function SeamlessExperienceSection() {
+    const videoRef = useRef<HTMLVideoElement | null>(null)
+    const headingRef = useRef<HTMLHeadingElement | null>(null)
+    const headingColor = useVideoContrast(videoRef, headingRef)
+
     return (
-        <section className="relative py-20 md:py-32 px-4 md:px-6 bg-white">
-            <div className="relative mx-auto max-w-7xl">
+        <section className="relative isolate overflow-hidden py-20 md:py-32 px-4 md:px-6">
+            <video
+                ref={videoRef}
+                className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+            >
+                <source src="/hero-bg0.mp4" type="video/mp4" />
+                <source src="/hero-bg0.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="relative z-10 mx-auto max-w-7xl">
 
                 {/* Section Label */}
                 <div className="text-center mb-12 md:mb-20">
@@ -196,11 +327,13 @@ export default function SeamlessExperienceSection() {
                         />
                     </motion.div>
                     <motion.h2
+                        ref={headingRef}
                         initial={false}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.6, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
-                        className="text-3xl md:text-5xl font-bold text-gray-900"
+                        className="text-3xl md:text-5xl font-bold"
+                        style={{ color: headingColor, transition: 'color 160ms linear' }}
                     >
                         Built for Smooth Event Days
                     </motion.h2>

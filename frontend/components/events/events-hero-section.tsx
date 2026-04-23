@@ -117,32 +117,6 @@ export default function EventsHeroSection() {
         {/* Dark Overlay */}
         <div className="absolute inset-0 z-[1] bg-black/60 pointer-events-none" />
 
-        {/* Noise Overlay */}
-        <div className="absolute inset-0 z-[2] opacity-[0.05] pointer-events-none overflow-hidden">
-          <div
-            className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%]"
-            style={{
-              backgroundImage: 'url("https://framerusercontent.com/images/rR6HYXBrMmX4cRpXfXUOvpvpB0.png")',
-              animation: 'grain 8s steps(10) infinite'
-            }}
-          />
-        </div>
-        <style dangerouslySetInnerHTML={{
-          __html: `
-            @keyframes grain {
-                0%, 100% { transform: translate(0, 0); }
-                10% { transform: translate(-5%, -10%); }
-                20% { transform: translate(-15%, 5%); }
-                30% { transform: translate(7%, -25%); }
-                40% { transform: translate(-5%, 25%); }
-                50% { transform: translate(-15%, 10%); }
-                60% { transform: translate(15%, 0%); }
-                70% { transform: translate(0%, 15%); }
-                80% { transform: translate(3%, 35%); }
-                90% { transform: translate(-10%, 10%); }
-            }
-        `}} />
-
         {/* Content */}
         <div className="relative z-10 mx-auto max-w-5xl px-4 xs:px-5 sm:px-6 py-24 xs:py-28 sm:py-32">
           <div className="text-center">
