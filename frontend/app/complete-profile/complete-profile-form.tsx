@@ -130,7 +130,7 @@ export function CompleteProfileForm() {
         <CardHeader className="space-y-1 flex flex-col items-center">
           <div className="w-20 h-20 relative mb-4">
             <Image
-              src="/logo/Logomark_Cerulean_Blue.svg"
+              src="/logo/logo.jpg"
               alt="ConveneHub Logo"
               fill
               className="object-contain"

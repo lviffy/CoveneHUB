@@ -5,7 +5,7 @@ export const Logo = ({ className, uniColor }: { className?: string; uniColor?: b
     return (
         <div className={cn('flex items-center space-x-1', className)}>
             <Image
-                src="/logo/Logomark_Cerulean_Blue.svg"
+                src="/logo/logo.jpg"
                 alt="ConveneHub Logo"
                 width={40}
                 height={40}

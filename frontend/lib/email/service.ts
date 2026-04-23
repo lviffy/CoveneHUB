@@ -140,7 +140,7 @@ export async function sendBookingConfirmationWithQR(
   const template = bookingConfirmationTemplate(bookingDetails);
 
   // Read logo file from public folder
-  const logoPath = path.join(process.cwd(), 'public', 'logo', 'Logomark_Cerulean_Blue.png');
+  const logoPath = path.join(process.cwd(), 'public', 'logo', 'logo.jpg');
 
   const attachments: Array<{
     filename: string;
@@ -150,9 +150,9 @@ export async function sendBookingConfirmationWithQR(
     cid?: string;
   }> = [
       {
-        filename: 'convenehub-logo.png',
+        filename: 'convenehub-logo.jpg',
         path: logoPath,
-        contentType: 'image/png',
+        contentType: 'image/jpeg',
         cid: 'logo@convenehub', // Content-ID for logo
       },
     ];
@@ -226,7 +226,7 @@ export async function sendBookingConfirmationWithMultipleTickets(
   }
 
   // Read logo file
-  const logoPath = path.join(process.cwd(), 'public', 'logo', 'Logomark_Cerulean_Blue.png');
+  const logoPath = path.join(process.cwd(), 'public', 'logo', 'logo.jpg');
 
   const attachments: Array<{
     filename: string;
@@ -236,9 +236,9 @@ export async function sendBookingConfirmationWithMultipleTickets(
     cid?: string;
   }> = [
       {
-        filename: 'convenehub-logo.png',
+        filename: 'convenehub-logo.jpg',
         path: logoPath,
-        contentType: 'image/png',
+        contentType: 'image/jpeg',
         cid: 'logo@convenehub',
       },
     ];
@@ -292,7 +292,7 @@ export async function sendBookingConfirmationWithMultipleQR(
   );
 
   // Read logo file
-  const logoPath = path.join(process.cwd(), 'public', 'logo', 'Logomark_Cerulean_Blue.png');
+  const logoPath = path.join(process.cwd(), 'public', 'logo', 'logo.jpg');
 
   // Create attachments array with logo and all QR codes
   const attachments: Array<{
@@ -303,9 +303,9 @@ export async function sendBookingConfirmationWithMultipleQR(
     cid?: string;
   }> = [
       {
-        filename: 'convenehub-logo.png',
+        filename: 'convenehub-logo.jpg',
         path: logoPath,
-        contentType: 'image/png',
+        contentType: 'image/jpeg',
         cid: 'logo@convenehub',
       },
     ];
@@ -437,4 +437,3 @@ export async function sendPaymentReceipt(
     text: template.text,
   });
 }
-

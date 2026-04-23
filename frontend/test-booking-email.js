@@ -72,7 +72,7 @@ async function testBookingEmail() {
     console.error('');
     console.error('⚠️  Possible issues:');
     console.error('   1. Check SMTP credentials in .env.local');
-    console.error('   2. Ensure logo file exists at public/logo/Logomark_Cerulean_Blue.png');
+    console.error('   2. Ensure logo file exists at public/logo/logo.jpg');
     console.error('   3. Verify QR generation is working');
     console.error('   4. Check network connectivity to SMTP server');
   }

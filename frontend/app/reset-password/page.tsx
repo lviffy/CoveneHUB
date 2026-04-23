@@ -142,7 +142,7 @@ function ResetPasswordContent() {
                 </div>
               ) : (
                 <Image
-                  src="/logo/Logomark_Cerulean_Blue.svg"
+                  src="/logo/logo.jpg"
                   alt="CONVENEHUB"
                   width={80}
                   height={80}
@@ -192,7 +192,7 @@ function ResetPasswordContent() {
               </div>
             ) : (
               <Image
-                src="/logo/Logomark_Cerulean_Blue.svg"
+                src="/logo/logo.jpg"
                 alt="CONVENEHUB"
                 width={80}
                 height={80}

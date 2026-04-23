@@ -153,7 +153,7 @@ export const HeroHeader = () => {
                                     href="/"
                                     aria-label="home"
                                     className="flex items-center space-x-2 group">
-                                    <Logo uniColor={true} />
+                                    <Logo className="[&_img]:rounded-lg" uniColor={true} />
                                 </Link>
                             </motion.div>
 

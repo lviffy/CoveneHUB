@@ -44,11 +44,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/logo/Logomark_Cerulean_Blue.png', type: 'image/png' },
+      { url: '/logo/logo.jpg', type: 'image/jpeg' },
     ],
-    shortcut: '/logo/Logomark_Cerulean_Blue.png',
+    shortcut: '/logo/logo.jpg',
     apple: [
-      { url: '/logo/Logomark_Cerulean_Blue.png', type: 'image/png' },
+      { url: '/logo/logo.jpg', type: 'image/jpeg' },
     ],
   },
 };

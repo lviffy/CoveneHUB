@@ -384,7 +384,7 @@ export function OrganizerLoginForm() {
           {/* ConveneHub Logo */}
           <div className="mx-auto">
             <Image
-              src="/logo/Logomark_Cerulean_Blue.svg"
+              src="/logo/logo.jpg"
               alt="ConveneHub"
               width={80}
               height={80}
