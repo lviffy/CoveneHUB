@@ -4,6 +4,7 @@
   "private": true,
   "main": "src/server.js",
   "scripts": {
+    "build": "echo 'No build required for backend'",
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "backfill:role-flow": "node scripts/backfill-role-flow-data.js"
