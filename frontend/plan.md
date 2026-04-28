@@ -3,7 +3,9 @@
 This document serves as the canonical, production-grade guide for safely migrating the CoveneHUB frontend from TypeScript to JavaScript. The core goal is absolute fidelity to existing application runtime behavior while stripping static type analysis and tooling comprehensively.
 
 ## Phase 1: Pre-Migration Audit & Freeze
+
 Before beginning the migration, the codebase must be isolated to prevent merge conflicts.
+
 1. **Branching & Feature Freeze:**
    - Execute `git checkout -b migration/frontend-ts-to-js`.
    - Enforce a frontend feature freeze until migration is validated.
@@ -11,6 +13,7 @@ Before beginning the migration, the codebase must be isolated to prevent merge c
    - CoveneHUB utilizes a mix of Next.js (`app/` router) and Vite elements. Next.js natively handles `.js`/`.jsx` inside `.next/` pipeline, as does Vite. Zero major build step changes are strictly necessary aside from AST parsers, but specific config files (e.g. `vite.config.ts`, `tailwind.config.ts`) must be addressed without breaking module resolution.
 
 ## Phase 2: Automated AST Type Stripping
+
 Manual type shedding is highly prone to human error and regressions. We will use Babel or SWC to strip the TypeScript AST, ensuring 100% preservation of raw runtime logic.
 
 1. **Automated Codemod via Babel CLI:**
@@ -32,9 +35,10 @@ Manual type shedding is highly prone to human error and regressions. We will use
    ```bash
    find . -type f \( -name "*.ts" -o -name "*.tsx" \) -not -path "*/node_modules/*" -not -name "vite-env.d.ts" -delete
    ```
-   *Note: Next.js specific routing files inside the `app/` folder (like `page.tsx`, `layout.tsx`) will now be perfectly functioning `page.jsx` and `layout.jsx` files.*
+   _Note: Next.js specific routing files inside the `app/` folder (like `page.tsx`, `layout.tsx`) will now be perfectly functioning `page.jsx` and `layout.jsx` files._
 
 ## Phase 3: High-Level Configuration Refactor
+
 Several config arrays specify `.ts/.tsx` extensions that must be updated.
 
 1. **`tailwind.config.ts` \-\> `tailwind.config.js`:**
@@ -56,6 +60,7 @@ Several config arrays specify `.ts/.tsx` extensions that must be updated.
      `<script type="module" src="/src/main.jsx"></script>`
 
 ## Phase 4: Module References & Dependencies
+
 Next.js and modern bundlers resolve extension-less imports automatically, but specific files must be addressed.
 
 1. **Type & Interface Imports:**
@@ -80,9 +85,10 @@ Next.js and modern bundlers resolve extension-less imports automatically, but sp
    ```bash
    npm uninstall typescript @types/react @types/react-dom @types/node ts-node @typescript-eslint/eslint-plugin @typescript-eslint/parser
    ```
-   *(Also remove Babel if temporary CLI used in Phase 2)*
+   _(Also remove Babel if temporary CLI used in Phase 2)_
 
 ## Phase 5: Verification & Quality Assurance (QA)
+
 A production migration requires validation of absolute runtime fidelity.
 
 1. **Lint and Formatting Audit:**

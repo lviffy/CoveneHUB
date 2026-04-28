@@ -30,20 +30,20 @@ The ConveneHub frontend is a modern, responsive React application built with Vit
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| **Framework** | React 18.3+ |
-| **Build Tool** | Vite 7.1 |
-| **Language** | TypeScript 5.2 |
-| **Styling** | Tailwind CSS 3.3 |
-| **Routing** | React Router DOM 7.7 |
-| **UI Components** | Radix UI + shadcn/ui |
-| **Forms** | React Hook Form + Zod |
-| **Animations** | Framer Motion |
-| **Charts** | Recharts |
-| **Maps** | Leaflet + React Leaflet |
-| **QR Code** | jsqr |
-| **Icons** | Lucide React |
+| Category          | Technology              |
+| ----------------- | ----------------------- |
+| **Framework**     | React 18.3+             |
+| **Build Tool**    | Vite 7.1                |
+| **Language**      | TypeScript 5.2          |
+| **Styling**       | Tailwind CSS 3.3        |
+| **Routing**       | React Router DOM 7.7    |
+| **UI Components** | Radix UI + shadcn/ui    |
+| **Forms**         | React Hook Form + Zod   |
+| **Animations**    | Framer Motion           |
+| **Charts**        | Recharts                |
+| **Maps**          | Leaflet + React Leaflet |
+| **QR Code**       | jsqr                    |
+| **Icons**         | Lucide React            |
 
 ## Project Structure
 
@@ -131,13 +131,13 @@ npm run lint
 
 ## Available Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Preview production build |
-| `npm run lint` | Run ESLint |
-| `npm run analyze` | Analyze bundle size |
+| Script            | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Build for production     |
+| `npm run start`   | Preview production build |
+| `npm run lint`    | Run ESLint               |
+| `npm run analyze` | Analyze bundle size      |
 
 ## Key Components
 
@@ -228,5 +228,6 @@ MIT License — see the main project LICENSE file for details.
 <<<<<<< HEAD
 =======
 
-*Last Updated: April 26, 2026*
->>>>>>> 885b164eaedd794fab3a8b0572cc3d121d2522a8
+_Last Updated: April 26, 2026_
+
+> > > > > > > 885b164eaedd794fab3a8b0572cc3d121d2522a8
