@@ -2,10 +2,10 @@
 
 <div align="center">
 
-**The Express + TypeScript backend for ConveneHub event management platform**
+**The Express + JavaScript backend for ConveneHub event management platform**
 
 [![Express](https://img.shields.io/badge/Express-4.21-000000)](https://expressjs.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-5.8-blue)](https://www.javascriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-8.8-47A248)](https://www.mongodb.com/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933)](https://nodejs.org/)
 
@@ -15,7 +15,7 @@
 
 ## Overview
 
-The ConveneHub backend is a RESTful API built with Express, TypeScript, and MongoDB. It provides secure authentication, role-based access control, and comprehensive event management capabilities.
+The ConveneHub backend is a RESTful API built with Express, JavaScript, and MongoDB. It provides secure authentication, role-based access control, and comprehensive event management capabilities.
 
 ## Features
 
@@ -34,7 +34,7 @@ The ConveneHub backend is a RESTful API built with Express, TypeScript, and Mong
 | Category | Technology |
 |----------|------------|
 | **Framework** | Express 4.21 |
-| **Language** | TypeScript 5.8 |
+| **Language** | JavaScript 5.8 |
 | **Database** | MongoDB 8.8 (via Mongoose) |
 | **Authentication** | JWT (jsonwebtoken) |
 | **Validation** | Zod |
@@ -51,10 +51,10 @@ The ConveneHub backend is a RESTful API built with Express, TypeScript, and Mong
 ```
 backend/
 ├── src/
-│   ├── server.ts             # Application entry point
+│   ├── server.js             # Application entry point
 │   ├── config/               # Configuration files
-│   │   ├── database.ts       # MongoDB connection
-│   │   └── index.ts          # Environment config
+│   │   ├── database.js       # MongoDB connection
+│   │   └── index.js          # Environment config
 │   ├── models/               # Mongoose models
 │   │   ├── User.ts
 │   │   ├── Event.ts
@@ -75,21 +75,21 @@ backend/
 │   │   └── admin.ts
 │   ├── controllers/          # Route controllers
 │   ├── middleware/           # Custom middleware
-│   │   ├── auth.ts           # Authentication middleware
-│   │   ├── rbac.ts           # Role-based access control
-│   │   └── errorHandler.ts   # Error handling
+│   │   ├── auth.js           # Authentication middleware
+│   │   ├── rbac.js           # Role-based access control
+│   │   └── errorHandler.js   # Error handling
 │   ├── services/             # Business logic
-│   │   ├── email.ts          # Email service
-│   │   ├── qr.ts             # QR code generation
-│   │   └── payment.ts        # Payment processing
-│   └── types/                # TypeScript types
+│   │   ├── email.js          # Email service
+│   │   ├── qr.js             # QR code generation
+│   │   └── payment.js        # Payment processing
+│   └── types/                # JavaScript types
 ├── scripts/                  # Utility scripts
 │   └── backfill-role-flow-data.ts
 ├── uploads/                  # File upload directory
 ├── dist/                     # Compiled JavaScript
 ├── .env                      # Environment variables
 ├── .env.example              # Environment template
-├── tsconfig.json             # TypeScript configuration
+├── tsconfig.json             # JavaScript configuration
 └── package.json              # Dependencies
 ```
 
@@ -170,7 +170,7 @@ npm start
 ### Type Checking
 
 ```bash
-# Run TypeScript type checker
+# Run JavaScript type checker
 npm run typecheck
 ```
 
@@ -179,9 +179,9 @@ npm run typecheck
 | Script | Description |
 |--------|-------------|
 | `npm run dev` | Start development server with tsx watch |
-| `npm run build` | Compile TypeScript to JavaScript |
+| `npm run build` | Compile JavaScript to JavaScript |
 | `npm run start` | Start production server |
-| `npm run typecheck` | Run TypeScript type checker |
+| `npm run typecheck` | Run JavaScript type checker |
 | `npm run backfill:role-flow` | Run database migration script |
 
 ## API Endpoints
@@ -395,7 +395,7 @@ CMD ["npm", "start"]
 ## Contributing
 
 1. Follow the existing code style
-2. Use TypeScript for all new code
+2. Use JavaScript for all new code
 3. Add JSDoc comments for complex functions
 4. Write tests for new features
 5. Run `npm run typecheck` before committing

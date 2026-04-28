@@ -5,7 +5,7 @@
 **The React + Vite frontend for ConveneHub event management platform**
 
 [![React](https://img.shields.io/badge/React-18.3+-61DAFB)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue)](https://www.typescriptlang.org/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-5.2-blue)](https://www.javascriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.1-646CFF)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.3-38B2AC)](https://tailwindcss.com/)
 
@@ -15,7 +15,7 @@
 
 ## Overview
 
-The ConveneHub frontend is a modern, responsive React application built with Vite and TypeScript. It provides role-based interfaces for organizers, attendees, promoters, and admins to manage events, bookings, and check-ins.
+The ConveneHub frontend is a modern, responsive React application built with Vite and JavaScript. It provides role-based interfaces for organizers, attendees, promoters, and admins to manage events, bookings, and check-ins.
 
 ## Features
 
@@ -34,7 +34,7 @@ The ConveneHub frontend is a modern, responsive React application built with Vit
 | ----------------- | ----------------------- |
 | **Framework**     | React 18.3+             |
 | **Build Tool**    | Vite 7.1                |
-| **Language**      | TypeScript 5.2          |
+| **Language**      | JavaScript 5.2          |
 | **Styling**       | Tailwind CSS 3.3        |
 | **Routing**       | React Router DOM 7.7    |
 | **UI Components** | Radix UI + shadcn/ui    |
@@ -50,8 +50,8 @@ The ConveneHub frontend is a modern, responsive React application built with Vit
 ```
 frontend/
 ├── src/
-│   ├── App.tsx              # Main application component
-│   ├── main.tsx             # Application entry point
+│   ├── App.jsx              # Main application component
+│   ├── main.jsx             # Application entry point
 │   ├── pages/               # Page components
 │   │   ├── auth/            # Authentication pages
 │   │   ├── events/          # Event listing and details
@@ -65,12 +65,12 @@ frontend/
 │   ├── lib/                 # Utility libraries
 │   ├── hooks/               # Custom React hooks
 │   ├── utils/               # Helper functions
-│   └── types/               # TypeScript type definitions
+│   └── types/               # JavaScript type definitions
 ├── public/                  # Static assets
 ├── index.html               # HTML template
-├── vite.config.ts           # Vite configuration
-├── tailwind.config.ts       # Tailwind configuration
-├── tsconfig.json            # TypeScript configuration
+├── vite.config.js           # Vite configuration
+├── tailwind.config.js       # Tailwind configuration
+├── tsconfig.json            # JavaScript configuration
 └── package.json             # Dependencies
 ```
 
@@ -213,7 +213,7 @@ The frontend communicates with the backend via REST API:
 ## Contributing
 
 1. Follow the existing code style
-2. Use TypeScript for all new code
+2. Use JavaScript for all new code
 3. Add tests for new features
 4. Update documentation as needed
 5. Run `npm run lint` before committing

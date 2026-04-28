@@ -4,7 +4,7 @@
 
 **A role-based event platform for organizers, attendees, promoters, and admins**
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-5.0-blue)](https://www.javascriptlang.org/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB)](https://react.dev/)
 [![Express](https://img.shields.io/badge/Express-4.x-000000)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248)](https://www.mongodb.com/)
@@ -47,8 +47,8 @@ ConveneHub is a comprehensive event management platform that supports multi-role
 
 | Component          | Technology                     |
 | ------------------ | ------------------------------ |
-| **Frontend**       | React + Vite + TypeScript      |
-| **Backend**        | Express + TypeScript + MongoDB |
+| **Frontend**       | React + Vite + JavaScript      |
+| **Backend**        | Express + JavaScript + MongoDB |
 | **Shared**         | Shared contracts/types         |
 | **Database**       | MongoDB                        |
 | **Authentication** | JWT + Google OAuth (optional)  |
@@ -198,7 +198,7 @@ npm run dev:frontend # Frontend on http://localhost:5173
 ```
 CoveneHUB/
 ├── frontend/          # React + Vite frontend
-├── backend/           # Express + TypeScript backend
+├── backend/           # Express + JavaScript backend
 ├── shared/            # Shared types and contracts
 ├── docker-compose.yml # Docker configuration
 └── README.md          # This file

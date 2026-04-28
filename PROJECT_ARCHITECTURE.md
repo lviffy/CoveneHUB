@@ -6,8 +6,8 @@ _Last updated: 2026-04-24_
 
 ConveneHub is a **monorepo** with a currently active runtime composed of:
 
-- `frontend`: Vite + React + TypeScript SPA
-- `backend`: Express + TypeScript + MongoDB (Mongoose)
+- `frontend`: Vite + React + JavaScript SPA
+- `backend`: Express + JavaScript + MongoDB (Mongoose)
 - `shared`: minimal shared type contracts
 
 ---
@@ -20,8 +20,8 @@ ConveneHub is a **monorepo** with a currently active runtime composed of:
 ├─ docker-compose.yml            # Mongo + backend local stack
 ├─ backend/
 │  ├─ src/
-│  │  ├─ app.ts                  # Express app composition
-│  │  ├─ server.ts               # Server bootstrap
+│  │  ├─ app.js                  # Express app composition
+│  │  ├─ server.js               # Server bootstrap
 │  │  ├─ config/                 # env + DB connection
 │  │  ├─ middlewares/            # auth + error middleware
 │  │  ├─ models/                 # Mongoose domain models
@@ -39,7 +39,7 @@ ConveneHub is a **monorepo** with a currently active runtime composed of:
 │  ├─ tests/                     # e2e/integration/security tests
 │  └─ app/api/                   # supplemental API route handlers
 └─ shared/
-   └─ types.ts                   # shared minimal API types
+   └─ types.js                   # shared minimal API types
 ```
 
 ---
@@ -74,7 +74,7 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
 app.use('/api/v1', apiRouter);
 ```
 
-Frontend fetch wiring (`frontend/src/main.tsx`):
+Frontend fetch wiring (`frontend/src/main.jsx`):
 
 ```ts
 window.fetch = async (input, init) => {
@@ -295,9 +295,9 @@ Primary models (`backend/src/models`):
 
 ## 5.1 SPA Runtime
 
-- Entrypoint: `frontend/src/main.tsx`
+- Entrypoint: `frontend/src/main.jsx`
 - Router: `react-router-dom` `BrowserRouter`
-- Route map: `frontend/src/App.tsx` (imports many `frontend/app/*/page.tsx` modules)
+- Route map: `frontend/src/App.jsx` (imports many `frontend/app/*/page.jsx` modules)
 
 ## 5.2 Supabase-like Client Adapter (Critical Abstraction)
 
@@ -340,11 +340,11 @@ Component architecture:
 
 Lazy-loading:
 
-- `components/lazy-components.tsx` dynamically loads heavy dashboards.
+- `components/lazy-components.jsx` dynamically loads heavy dashboards.
 
 ## 5.4 Payment UX
 
-`components/payments/RazorpayCheckout.tsx` orchestrates:
+`components/payments/RazorpayCheckout.jsx` orchestrates:
 
 1. create order (`/api/payments/create-order`)
 2. Razorpay checkout handler
@@ -519,7 +519,7 @@ Key groups:
 `backend/Dockerfile`:
 
 - multi-stage Node 20 Alpine build
-- compiles TypeScript into `dist`
+- compiles JavaScript into `dist`
 - runtime installs prod deps and runs `node dist/server.js`
 
 ## 9.3 Frontend Hosting
@@ -541,7 +541,7 @@ Key groups:
 
 3. Multiple API calling layers:
 
-- `window.fetch` override in `src/main.tsx`
+- `window.fetch` override in `src/main.jsx`
 - plus auth/data adapter in `lib/convene/client.ts`
 
 ---
@@ -557,12 +557,12 @@ If onboarding a new engineer, read in this order:
 5. `backend/src/routes/bookings.routes.ts`
 6. `backend/src/routes/payments.routes.ts`
 7. `backend/src/models/*.ts`
-8. `frontend/src/main.tsx`
-9. `frontend/src/App.tsx`
+8. `frontend/src/main.jsx`
+9. `frontend/src/App.jsx`
 10. `frontend/lib/convene/client.ts`
-11. `frontend/components/events/event-booking-page.tsx`
-12. `frontend/components/admin/admin-dashboard.tsx`
-13. `frontend/components/organizer-team/organizer-team-dashboard.tsx`
+11. `frontend/components/events/event-booking-page.jsx`
+12. `frontend/components/admin/admin-dashboard.jsx`
+13. `frontend/components/organizer-team/organizer-team-dashboard.jsx`
 
 ---
 

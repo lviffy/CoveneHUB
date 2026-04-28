@@ -46,9 +46,9 @@ This script is designed for a video walkthrough of the ConveneHub codebase. It c
 
 ### Scene 6: Frontend Routing & Global Fetch
 
-- **🖥️ What to show (Screen):** Open `frontend/src/App.tsx` showing the routes, and then switch to `frontend/src/main.tsx`. Highlight the block where `window.fetch` is being intercepted/overridden.
+- **🖥️ What to show (Screen):** Open `frontend/src/App.jsx` showing the routes, and then switch to `frontend/src/main.jsx`. Highlight the block where `window.fetch` is being intercepted/overridden.
 - **🎙️ What to say (Voice-over):**
-  > "Moving over to the frontend, we use React with Vite for blazing fast builds. Our routing directs users to public pages, authenticated dashboards, or the booking interface. A really cool architectural feature here is in `main.tsx`. We globally intercept the browser's `fetch` API. This allows us to automatically inject JWT bearer tokens into every request and handle token refreshes seamlessly in the background."
+  > "Moving over to the frontend, we use React with Vite for blazing fast builds. Our routing directs users to public pages, authenticated dashboards, or the booking interface. A really cool architectural feature here is in `main.jsx`. We globally intercept the browser's `fetch` API. This allows us to automatically inject JWT bearer tokens into every request and handle token refreshes seamlessly in the background."
 
 ### Scene 7: The Data API Client Adapter
 
@@ -58,13 +58,13 @@ This script is designed for a video walkthrough of the ConveneHub codebase. It c
 
 ### Scene 8: User Interfaces - Booking & Dashboards
 
-- **🖥️ What to show (Screen):** Open `frontend/components/events/event-booking-page.tsx`. Then briefly show `frontend/components/admin/admin-dashboard.tsx` or `frontend/components/organizer-team/organizer-team-dashboard.tsx`.
+- **🖥️ What to show (Screen):** Open `frontend/components/events/event-booking-page.jsx`. Then briefly show `frontend/components/admin/admin-dashboard.jsx` or `frontend/components/organizer-team/organizer-team-dashboard.jsx`.
 - **🎙️ What to say (Voice-over):**
   > "On the UI side, we have dedicated, lazy-loaded components for different user journeys. The Event Booking Page provides a smooth checkout experience. Meanwhile, event organizers and admins have protected, data-rich dashboards where they can view real-time analytics, financial reconciliations, and manage their events."
 
 ### Scene 9: QR Code Check-in System
 
-- **🖥️ What to show (Screen):** Open a check-in component, like `frontend/components/organizer-team/live-checkin.tsx` or the backend `backend/src/routes/checkins.routes.ts`.
+- **🖥️ What to show (Screen):** Open a check-in component, like `frontend/components/organizer-team/live-checkin.jsx` or the backend `backend/src/routes/checkins.routes.ts`.
 - **🎙️ What to say (Voice-over):**
   > "Finally, for event-day operations, we built a Live Check-in system. Organizers can use their devices to scan attendees' ticket QR codes. This hits our backend check-in endpoint to validate the secure QR payload in real-time. It prevents duplicate entries and updates live attendance stats instantly."
 
